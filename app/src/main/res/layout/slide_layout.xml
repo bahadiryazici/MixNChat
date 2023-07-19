@@ -5,41 +5,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    tools:context=".onboarding.screens.FirstScreen">
+    tools:context=".ui.onboarding.screens.FirstScreen">
 
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/slideImage"
         android:layout_width="325dp"
         android:layout_height="325dp"
-        android:src="@drawable/searching"
+        android:src="@drawable/highfive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
-
+        android:id="@+id/slideHeading"
         android:layout_width="375dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:fontFamily="@font/rockwell_bold"
         android:gravity="center_horizontal|top"
-        android:text="Start Exploring"
+        android:text="Create Your Profile"
         android:textAlignment="center"
         android:textColor="#3F3D56"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/slideImage" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/slideDescription"
         android:layout_width="308dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:text="Our app offers random buddies for you. Start chatting with people who are right for you."
+        android:layout_marginTop="20dp"
+        android:text="The first step is to create a great profile that introduces yourself! Add your own photos, share your hobbies and interests. So other users can get to know you better and find common points."
         android:textAlignment="center"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
@@ -49,10 +48,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.388"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/slideHeading" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/nextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#FF8A00"
