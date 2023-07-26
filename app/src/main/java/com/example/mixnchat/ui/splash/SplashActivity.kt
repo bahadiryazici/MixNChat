@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mixnchat.MainActivity
 import com.example.mixnchat.R
+import com.example.mixnchat.ui.login.LoginActivity
 import com.example.mixnchat.ui.onboarding.OnboardingActivity
 import com.example.mixnchat.utils.Constants
 import com.example.mixnchat.utils.PreferencesProvider
@@ -24,9 +25,9 @@ class SplashActivity : AppCompatActivity()  {
         preferences = PreferencesProvider(context = this.applicationContext)
 
         CoroutineScope(Dispatchers.Main).launch{
-            delay(1000)
+            delay(3000)
             val intent = if (preferences.getBoolean(Constants.KEY_0NBOARDING)){
-                Intent(this@SplashActivity, MainActivity::class.java)
+                Intent(this@SplashActivity, LoginActivity::class.java)
             }else{
                 Intent(this@SplashActivity, OnboardingActivity::class.java)
             }

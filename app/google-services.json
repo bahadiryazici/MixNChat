@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "34440345033",
+    "project_id": "mixnchat-e772e",
+    "storage_bucket": "mixnchat-e772e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34440345033:android:3c896ee012c52ca46e6418",
+        "android_client_info": {
+          "package_name": "com.example.mixnchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "34440345033-k1377t82pkadkd0g4i4o76jrgt18lqbm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKIKYaXDcR8lho7WYR5PfIBjVAG1wN7yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "34440345033-emjdtgjvivadv830co7tb3sqr57e3jjd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

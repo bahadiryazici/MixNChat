@@ -1,5 +1,31 @@
 <resources>
     <string name="app_name">MixNChat</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="finish">Finish</string>
+    <string name="permission">Permission needed for gallery</string>
+    <string name="sliderHeader1">Create Your Profile</string>
+    <string name="sliderHeader2">Start Exploring</string>
+    <string name="sliderHeader3">Engaging Conversations</string>
+    <string name="sliderHeader4">Privacy and Security</string>
+    <string name="sliderHeader5">Make New Friends</string>
+    <string name="sliderDescription1">The first step is to create a great profile that introduces yourself! Add your own photos, share your hobbies and interests. So other users can get to know you better and find common points.</string>
+    <string name="sliderDescription2">Our app offers random buddies for you. Start chatting with people who are right for you.</string>
+    <string name="sliderDescription3">If you can find interesting people, you can start a conversation and make new connections by messaging them. Explore personal chats based on your interests and personal preferences.</string>
+    <string name="sliderDescription4">We prioritize your privacy and security. You can only communicate with people you allow. We dont allow offensive behavior in our app, and we encourage everyone to communicate respectfully with our community guidelines.</string>
+    <string name="sliderDescription5">Our app gives you the chance to meet new people and make meaningful connections. Start socializing in our app today to add new friends and valuable connections to your life.\n""\n""To get started, please create an account and join an exciting social experience!</string>
+
+    <string name="webID">34440345033-k1377t82pkadkd0g4i4o76jrgt18lqbm.apps.googleusercontent.com</string>
+
+    <string-array name="gender">
+        <item>Female</item>
+        <item>Male</item>
+        <item>Non-Binary</item>
+    </string-array>
+
+    <string-array name="Country">
+        <item>Türkiye</item>
+    </string-array>
+
+
 </resources>
