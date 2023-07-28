@@ -12,17 +12,18 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
-import com.example.mixnchat.MainActivity
+import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
@@ -32,6 +33,7 @@ class LoginFragment : Fragment() {
     private var _binding : FragmentLoginBinding ?= null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    private lateinit var firestore : FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var launcher : ActivityResultLauncher<Intent>
 
@@ -44,10 +46,12 @@ class LoginFragment : Fragment() {
     }
 
     private fun init() {
+        firestore = Firebase.firestore
         auth = Firebase.auth
         val currentUser = auth.currentUser
+
         if(currentUser != null){
-            val intent = Intent(requireActivity(),MainActivity::class.java)
+            val intent = Intent(requireActivity(), MainActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
@@ -81,10 +85,6 @@ class LoginFragment : Fragment() {
         binding.googleSignIn.setOnClickListener {
             loginWithGoogle()
         }
-        binding.phoneSignIn.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToPhoneFragment()
-            findNavController().navigate(action)
-        }
     }
 
     private fun login() {
@@ -97,9 +97,13 @@ class LoginFragment : Fragment() {
             binding.passwordEdit.error = "Fill this field!"
         }else{
             auth.signInWithEmailAndPassword(email,password).addOnSuccessListener {
-                    val intent = Intent(requireActivity(),MainActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
+                    if (auth.currentUser!!.isEmailVerified){
+                        val intent = Intent(requireActivity(), MainActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }else{
+                        Toast.makeText(requireContext(),"Please verify your mail address", Toast.LENGTH_LONG).show()
+                    }
             }.addOnFailureListener {
                     Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
             }
@@ -120,11 +124,22 @@ class LoginFragment : Fragment() {
                     if (account != null){
                         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                         auth.signInWithCredential(credential).addOnSuccessListener {
-                            val intent = Intent(requireActivity(),MainActivity::class.java)
-                            intent.putExtra("email",account.email)
-                            intent.putExtra("name", account.displayName)
-                            intent.putExtra("photo", account.photoUrl)
-                            startActivity(intent)
+                            val intent = Intent(requireActivity(), MainActivity::class.java)
+                            val user = hashMapOf<String,Any>()
+                            user["username"] = account.displayName.toString()
+                            user["profileUrl"] = account.photoUrl.toString()
+                            user["country"] = ""
+                            user["gender"] = ""
+                            user["biography"] = ""
+                            user["phone"] = ""
+                            firestore.collection("Users").add(user).addOnSuccessListener {
+                                startActivity(intent)
+                                requireActivity().finish()
+                            }.addOnFailureListener {
+                                Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+                            }
+
+
                         }.addOnFailureListener {
                             Toast.makeText(requireActivity(),it.localizedMessage,Toast.LENGTH_LONG).show()
                         }
@@ -135,8 +150,4 @@ class LoginFragment : Fragment() {
             }
         }
     }
-
-
-
-
 }

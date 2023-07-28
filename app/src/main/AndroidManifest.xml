@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.mainpage.MainActivity"
             android:exported="true" />
 
         <meta-data

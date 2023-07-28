@@ -1,5 +1,6 @@
 package com.example.mixnchat.ui.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -9,8 +10,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.AnimationSet
 import android.widget.Toast
-import com.example.mixnchat.MainActivity
+import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentOTPBinding
 import com.google.firebase.FirebaseException
@@ -23,6 +26,10 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class OTPFragment : Fragment() {
@@ -32,6 +39,11 @@ class OTPFragment : Fragment() {
     private lateinit var OTP : String
     private lateinit var resendingToken : PhoneAuthProvider.ForceResendingToken
     private lateinit var phone : String
+    private lateinit var fadeIn : AlphaAnimation
+    private lateinit var fadeOut : AlphaAnimation
+    private lateinit var animSet : AnimationSet
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -40,6 +52,7 @@ class OTPFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     private fun init() {
         arguments?.let {
             resendingToken = OTPFragmentArgs.fromBundle(it).resendToken
@@ -48,6 +61,49 @@ class OTPFragment : Fragment() {
         }
         auth = Firebase.auth
         addTextChangeListener()
+
+        animationFirst()
+
+        with(binding){
+            iconView2.animation = animSet
+            textView17.animation = animSet
+            textView18.animation = animSet
+            textView19.animation = animSet
+
+            iconView2.visibility = View.INVISIBLE
+            textView17.visibility = View.INVISIBLE
+            textView18.visibility = View.INVISIBLE
+            textView19.visibility = View.INVISIBLE
+        }
+
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(5000)
+            animationSecond()
+            with(binding){
+                box1.animation = animSet
+                box2.animation = animSet
+                box3.animation = animSet
+                box4.animation = animSet
+                box5.animation = animSet
+                box6.animation = animSet
+                textView14.animation = animSet
+                textView15.animation = animSet
+                continueButton.animation = animSet
+                resendPassword.animation = animSet
+                textView15.text = requireActivity().getString(R.string.verify) + phone
+
+                box1.visibility = View.VISIBLE
+                box2.visibility = View.VISIBLE
+                box3.visibility = View.VISIBLE
+                box4.visibility = View.VISIBLE
+                box5.visibility = View.VISIBLE
+                box6.visibility = View.VISIBLE
+                continueButton.visibility = View.VISIBLE
+                resendPassword.visibility = View.VISIBLE
+                textView14.visibility = View.VISIBLE
+                textView15.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,15 +144,21 @@ class OTPFragment : Fragment() {
             // This callback is invoked in an invalid request for verification is made,
             // for instance if the the phone number format is not valid.
 
-            if (e is FirebaseAuthInvalidCredentialsException) {
-                // Invalid request
-                Log.d("TAG", "onVerificationFailed: ${e.toString()}")
-            } else if (e is FirebaseTooManyRequestsException) {
-                // The SMS quota for the project has been exceeded
-                Log.d("TAG", "onVerificationFailed: ${e.toString()}")
-            } else if (e is FirebaseAuthMissingActivityForRecaptchaException) {
-                // reCAPTCHA verification attempted with null Activity
-                Log.d("TAG", "onVerificationFailed: ${e.toString()}")
+            when (e) {
+                is FirebaseAuthInvalidCredentialsException -> {
+                    // Invalid request
+                    Log.d("TAG", "onVerificationFailed: ${e.toString()}")
+                }
+
+                is FirebaseTooManyRequestsException -> {
+                    // The SMS quota for the project has been exceeded
+                    Log.d("TAG", "onVerificationFailed: ${e.toString()}")
+                }
+
+                is FirebaseAuthMissingActivityForRecaptchaException -> {
+                    // reCAPTCHA verification attempted with null Activity
+                    Log.d("TAG", "onVerificationFailed: ${e.toString()}")
+                }
             }
             // Show a message and update the UI
         }
@@ -122,6 +184,7 @@ class OTPFragment : Fragment() {
             if(typedOTP.length == 6){
                 val credential : PhoneAuthCredential = PhoneAuthProvider.getCredential(OTP,typedOTP)
                 signInWithPhoneAuthCredential(credential)
+
             }else{
                 Toast.makeText(requireContext(),"Please Enter Correct OTP", Toast.LENGTH_LONG).show()
             }
@@ -129,16 +192,6 @@ class OTPFragment : Fragment() {
             Toast.makeText(requireContext(),"Please Enter OTP", Toast.LENGTH_LONG).show()
         }
     }
-
-    private fun addTextChangeListener(){
-        binding.box1.addTextChangedListener(EditTextWatcher(binding.box1))
-        binding.box2.addTextChangedListener(EditTextWatcher(binding.box2))
-        binding.box3.addTextChangedListener(EditTextWatcher(binding.box3))
-        binding.box4.addTextChangedListener(EditTextWatcher(binding.box4))
-        binding.box5.addTextChangedListener(EditTextWatcher(binding.box5))
-        binding.box6.addTextChangedListener(EditTextWatcher(binding.box6))
-    }
-
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
@@ -147,7 +200,7 @@ class OTPFragment : Fragment() {
                     Toast.makeText(requireContext(),"Authenticate Succesfull", Toast.LENGTH_LONG).show()
                     val intent = Intent(requireActivity(), MainActivity::class.java)
                     startActivity(intent)
-                }else{
+                } else {
                     // Sign in failed, display a message and update the UI
                     Log.d("TAG", "signInWithPhoneAuthCredential: ${task.exception.toString()}")
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
@@ -156,6 +209,14 @@ class OTPFragment : Fragment() {
                     // Update UI
                 }
             }
+    }
+    private fun addTextChangeListener(){
+        binding.box1.addTextChangedListener(EditTextWatcher(binding.box1))
+        binding.box2.addTextChangedListener(EditTextWatcher(binding.box2))
+        binding.box3.addTextChangedListener(EditTextWatcher(binding.box3))
+        binding.box4.addTextChangedListener(EditTextWatcher(binding.box4))
+        binding.box5.addTextChangedListener(EditTextWatcher(binding.box5))
+        binding.box6.addTextChangedListener(EditTextWatcher(binding.box6))
     }
 
     inner class EditTextWatcher(private val view: View) : TextWatcher{
@@ -172,5 +233,26 @@ class OTPFragment : Fragment() {
                 R.id.box6 -> if (text.isEmpty()) binding.box5.requestFocus()
             }
         }
+    }
+
+    private fun animationFirst(){
+        fadeIn = AlphaAnimation(0f,1f).apply {
+            duration = 3000L
+        }
+        fadeOut = AlphaAnimation(1f,0f).apply {
+            duration = 5000L
+        }
+        animSet = AnimationSet(false)
+        animSet.addAnimation(fadeIn)
+        animSet.addAnimation(fadeOut)
+        animSet.startNow()
+    }
+    private fun animationSecond(){
+        fadeIn = AlphaAnimation(0f,1f).apply {
+            duration = 3000L
+        }
+        animSet = AnimationSet(false)
+        animSet.addAnimation(fadeIn)
+        animSet.startNow()
     }
 }

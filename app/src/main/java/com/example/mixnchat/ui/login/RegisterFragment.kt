@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +19,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.mixnchat.MainActivity
+import androidx.navigation.fragment.findNavController
+import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentRegisterBinding
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -31,6 +40,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import java.io.IOException
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 
 class RegisterFragment : Fragment() {
@@ -44,6 +54,7 @@ class RegisterFragment : Fragment() {
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private var selectedPicture : Uri? = null
     private var selectedBitmap : Bitmap? = null
+    private var phone : String ?= null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -72,55 +83,65 @@ class RegisterFragment : Fragment() {
 
     private fun signUp() {
 
-        val email = binding.emailEditText2.text.toString()
+        val email = binding.emailEditText.text.toString()
         val password = binding.passwordEditText.text.toString()
         val username = binding.usernameEditText.text.toString()
         val country = binding.countrySpinner.selectedItem.toString()
+        val biography = binding.biographyEditText.text.toString()
         val gender = binding.genderSpinner.selectedItem.toString()
-
+        val phone = "+90${binding.phoneEditText.text}"
 
         val uuid = UUID.randomUUID()
         val imageName = "$uuid.jpg"
 
         val imageReference = storage.reference.child("profilePhotos").child(imageName)
 
+       if (email == "" || password == "" || biography == ""){
 
-       if (email == "" || password == ""){
-
-           binding.emailEditText2.error = "Please fill this area!"
+           binding.emailEditText.error = "Please fill this area!"
            binding.passwordEditText.error = "Please fill this area!"
+           binding.biographyEditText.error = "Please fill this area!"
 
-       }else if(!binding.pp.isSelected){
+       }else if(phone.length != 13 && binding.phoneEditText.text.isNotEmpty()){
+           binding.phoneEditText.error = "Please enter valid phone number"
+       }/*else if(binding.pp.isSelected == false){
            Toast.makeText(requireContext(),"Select a picture", Toast.LENGTH_LONG).show()
 
-       }else{
-           auth.createUserWithEmailAndPassword(email,password).addOnSuccessListener {
-               if(selectedPicture != null){
+       }*/else{
+               auth.createUserWithEmailAndPassword(email,password).addOnSuccessListener {
+                   if(selectedPicture != null){
+                       auth.currentUser?.sendEmailVerification()?.addOnCompleteListener {
+                           if(it.isSuccessful) {
+                               imageReference.putFile(selectedPicture!!).addOnSuccessListener {
+                                   imageReference.downloadUrl.addOnSuccessListener { uri ->
+                                       val profileUrl = uri.toString()
+                                       val user = hashMapOf<String, Any>()
+                                       user["profileUrl"] = profileUrl
+                                       user["username"] = username
+                                       user["country"] = country
+                                       user["gender"] = gender
+                                       user["biography"] = biography
+                                       user["phone"] = phone
+                                       firestore.collection("Users").add(user).addOnSuccessListener {
+                                           if(binding.phoneEditText.text.isEmpty()){
+                                               val intent = Intent(requireActivity(),MainActivity::class.java)
+                                               startActivity(intent)
+                                               requireActivity().finish()
+                                           }else{
+                                               phoneVerify()
+                                           }
 
-                   imageReference.putFile(selectedPicture!!).addOnSuccessListener {
-                       imageReference.downloadUrl.addOnSuccessListener { uri ->
-                           val profileUrl = uri.toString()
-                           val user = hashMapOf<String,Any>()
-                           user["profileUrl"] = profileUrl
-                           user["username"] = username
-                           user["country"] = country
-                           user["gender"] = gender
-
-                           firestore.collection("Users").add(user).addOnSuccessListener {
-                               val intent = Intent(requireActivity(), MainActivity::class.java)
-                               startActivity(intent)
-                               requireActivity().finish()
-                           }.addOnFailureListener {
-                               Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+                                       }.addOnFailureListener {
+                                           Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
+                                       }
+                                   }
+                               }
                            }
                        }
                    }
+               }.addOnFailureListener {
+                   Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
                }
-
-
-           }.addOnFailureListener {
-               Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
-           }
        }
     }
 
@@ -179,4 +200,65 @@ class RegisterFragment : Fragment() {
             }
         }
     }
+
+
+    private fun phoneVerify(){
+        phone = "+90${binding.phoneEditText.text}"
+        if(phone!!.isNotEmpty()){
+            if (phone!!.length == 13){
+                val options = PhoneAuthOptions.newBuilder(auth)
+                    .setPhoneNumber(phone!!)
+                    .setTimeout(60L, TimeUnit.SECONDS)
+                    .setActivity(requireActivity())
+                    .setCallbacks(callbacks)
+                    .build()
+                PhoneAuthProvider.verifyPhoneNumber(options)
+            }else{
+                binding.phoneEditText.error = "Please Enter Correct Number"
+            }
+        }else{
+            binding.phoneEditText.error = "Please Enter Number"
+        }
+    }
+
+    private val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+            // This callback will be invoked in two situations:
+            // 1 - Instant verification. In some cases the phone number can be instantly
+            //     verified without needing to send or enter a verification code.
+            // 2 - Auto-retrieval. On some devices Google Play services can automatically
+            //     detect the incoming verification SMS and perform verification without
+            //     user action.
+
+        }
+        override fun onVerificationFailed(e: FirebaseException) {
+            // This callback is invoked in an invalid request for verification is made,
+            // for instance if the the phone number format is not valid.
+            if (e is FirebaseAuthInvalidCredentialsException) {
+                // Invalid request
+                Log.d("TAG", "onVerificationFailed: ${e.toString()}")
+            } else if (e is FirebaseTooManyRequestsException) {
+                // The SMS quota for the project has been exceeded
+                Log.d("TAG", "onVerificationFailed: ${e.toString()}")
+            } else if (e is FirebaseAuthMissingActivityForRecaptchaException) {
+                // reCAPTCHA verification attempted with null Activity
+                Log.d("TAG", "onVerificationFailed: ${e.toString()}")
+            }
+            // Show a message and update the UI
+        }
+        override fun onCodeSent(
+            verificationId: String,
+            token: PhoneAuthProvider.ForceResendingToken,
+        ) {
+            // The SMS verification code has been sent to the provided phone number, we
+            // now need to ask the user to enter the code and then construct a credential
+            // by combining the code with a verification ID.
+            // Save verification ID and resending token so we can use them later
+            val action = RegisterFragmentDirections.actionRegisterFragmentToOTPFragment(verificationId,token,phone!!)
+            findNavController().navigate(action)
+        }
+    }
+
+
 }

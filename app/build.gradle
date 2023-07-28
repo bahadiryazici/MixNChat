@@ -66,4 +66,9 @@ dependencies {
     //dots indicator
     implementation("com.tbuonomo:dotsindicator:5.0")
 
+    //picasso
+    implementation 'com.squareup.picasso:picasso:2.8'
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
 }

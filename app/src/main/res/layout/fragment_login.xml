@@ -17,14 +17,6 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/phoneSignIn"
-                android:layout_width="42dp"
-                android:layout_height="35dp"
-                android:src="@drawable/phone_icon"
-                app:layout_constraintEnd_toEndOf="@+id/textView3"
-                app:layout_constraintTop_toTopOf="@+id/googleSignIn" />
-
-            <ImageView
                 android:id="@+id/app_Icon"
                 android:layout_width="175dp"
                 android:layout_height="200dp"
@@ -157,6 +149,7 @@
                 android:layout_height="35dp"
                 android:layout_marginTop="20dp"
                 android:src="@drawable/google"
+                app:layout_constraintEnd_toEndOf="@+id/textView3"
                 app:layout_constraintStart_toStartOf="@+id/textView3"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
