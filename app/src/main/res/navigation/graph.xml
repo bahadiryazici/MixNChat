@@ -19,5 +19,18 @@
         android:id="@+id/shuffleFragment"
         android:name="com.example.mixnchat.ui.mainpage.ShuffleFragment"
         android:label="fragment_shuffle"
-        tools:layout="@layout/fragment_shuffle" />
+        tools:layout="@layout/fragment_shuffle" >
+        <action
+            android:id="@+id/action_shuffleFragment_to_reviewedProfilPage"
+            app:destination="@id/reviewedProfilPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewedProfilPage"
+        android:name="com.example.mixnchat.ui.mainpage.ReviewedProfilePage"
+        android:label="fragment_reviewed_profil_page"
+        tools:layout="@layout/fragment_reviewed_profil_page" >
+        <argument
+            android:name="userUid"
+            app:argType="string" />
+    </fragment>
 </navigation>

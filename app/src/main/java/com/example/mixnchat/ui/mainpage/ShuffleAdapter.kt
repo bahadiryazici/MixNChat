@@ -3,6 +3,7 @@ package com.example.mixnchat.ui.mainpage
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mixnchat.data.Users
 import com.example.mixnchat.databinding.RecyclerShuffleBinding
@@ -24,6 +25,11 @@ class ShuffleAdapter(private val userList : ArrayList<Users>) : RecyclerView.Ada
             holder.recyclerShuffleBinding.username.text = userList[position].username
             holder.recyclerShuffleBinding.biography.text = userList[position].biography
             Picasso.get().load(userList[position].profileURL).into(holder.recyclerShuffleBinding.profilePhoto)
+
+            holder.itemView.setOnClickListener {
+                val action = ShuffleFragmentDirections.actionShuffleFragmentToReviewedProfilPage(userList[position].userUid!!)
+                Navigation.findNavController(it).navigate(action)
+            }
     }
 
     override fun getItemCount(): Int {

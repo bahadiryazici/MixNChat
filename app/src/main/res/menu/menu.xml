@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Follow"
+        android:id="@+id/follow"/>
+   <item
+        android:title="Block"
+        android:id="@+id/block"/>
+    <item
+        android:id="@+id/unFollow"
+        android:title="Unfollow" />
+    <item
+        android:id="@+id/unBlock"
+        android:title="Unblock" />
+</menu>

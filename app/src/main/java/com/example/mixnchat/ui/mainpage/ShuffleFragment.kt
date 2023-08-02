@@ -28,7 +28,7 @@ class ShuffleFragment : Fragment() {
     private lateinit var auth : FirebaseAuth
     private lateinit var shuffleAdapter: ShuffleAdapter
     private lateinit var mcontext : Context
-
+    val userArrayList = ArrayList<Users>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentShuffleBinding.inflate(layoutInflater,container,false)
@@ -40,6 +40,7 @@ class ShuffleFragment : Fragment() {
         mcontext = requireContext()
         db = Firebase.firestore
         auth = Firebase.auth
+
 
 
         binding.button3.setOnClickListener {
@@ -55,12 +56,15 @@ class ShuffleFragment : Fragment() {
             getUser()
             binding.swipeRefreshLayout.isRefreshing = false
         }
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(mcontext)
+        shuffleAdapter = ShuffleAdapter(userArrayList)
+        binding.recyclerView.adapter = shuffleAdapter
     }
 
 
     private fun getUser(){
 
-        val userArrayList = ArrayList<Users>()
 
         db.collection("Users").addSnapshotListener { snapshot, error ->
             if (error != null) {
@@ -69,6 +73,8 @@ class ShuffleFragment : Fragment() {
             }
 
             if (snapshot != null && !snapshot.isEmpty) {
+
+
                 val documents = snapshot.documents
 
                 val allUsers = ArrayList<Users>()
@@ -76,8 +82,9 @@ class ShuffleFragment : Fragment() {
                     val userName = document.getString("username")
                     val biography = document.getString("biography")
                     val profileUrl = document.getString("profileUrl")
+                    val userUid = document.getString("userUid")
                     if (userName != null && biography != null && profileUrl != null) {
-                        val user = Users(userName, biography, profileUrl)
+                        val user = Users(userName, biography, profileUrl, userUid)
                         allUsers.add(user)
                     }
                 }
@@ -90,10 +97,6 @@ class ShuffleFragment : Fragment() {
                         userArrayList.add(randomUser)
                     }
                 }
-
-                binding.recyclerView.layoutManager = LinearLayoutManager(mcontext)
-                shuffleAdapter = ShuffleAdapter(userArrayList)
-                binding.recyclerView.adapter = shuffleAdapter
                 shuffleAdapter.notifyDataSetChanged()
             }
         }

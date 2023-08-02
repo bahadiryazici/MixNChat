@@ -116,13 +116,15 @@ class RegisterFragment : Fragment() {
                                    imageReference.downloadUrl.addOnSuccessListener { uri ->
                                        val profileUrl = uri.toString()
                                        val user = hashMapOf<String, Any>()
+                                       user["userUid"] = auth.currentUser!!.uid
                                        user["profileUrl"] = profileUrl
                                        user["username"] = username
                                        user["country"] = country
                                        user["gender"] = gender
                                        user["biography"] = biography
                                        user["phone"] = phone
-                                       firestore.collection("Users").add(user).addOnSuccessListener {
+                                       user["speech"] = ""
+                                       firestore.collection("Users").document(auth.currentUser!!.uid).set(user).addOnSuccessListener {
                                            if(binding.phoneEditText.text.isEmpty()){
                                                val intent = Intent(requireActivity(),MainActivity::class.java)
                                                startActivity(intent)

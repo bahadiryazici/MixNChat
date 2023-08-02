@@ -126,13 +126,15 @@ class LoginFragment : Fragment() {
                         auth.signInWithCredential(credential).addOnSuccessListener {
                             val intent = Intent(requireActivity(), MainActivity::class.java)
                             val user = hashMapOf<String,Any>()
+                            user["userUid"] = auth.currentUser!!.uid
                             user["username"] = account.displayName.toString()
                             user["profileUrl"] = account.photoUrl.toString()
                             user["country"] = ""
                             user["gender"] = ""
                             user["biography"] = ""
                             user["phone"] = ""
-                            firestore.collection("Users").add(user).addOnSuccessListener {
+                            user["speech"] = ""
+                            firestore.collection("Users").document(auth.currentUser!!.uid).set(user).addOnSuccessListener {
                                 startActivity(intent)
                                 requireActivity().finish()
                             }.addOnFailureListener {
