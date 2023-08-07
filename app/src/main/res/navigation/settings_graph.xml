@@ -22,17 +22,17 @@
     </fragment>
     <fragment
         android:id="@+id/editEmailFragment"
-        android:name="com.example.mixnchat.ui.Settings.EditEmailFragment"
+        android:name="com.example.mixnchat.ui.Settings.editmail.EditEmailFragment"
         android:label="fragment_edit_email"
         tools:layout="@layout/fragment_edit_email" />
     <fragment
         android:id="@+id/editPasswordFragment"
-        android:name="com.example.mixnchat.ui.Settings.EditPasswordFragment"
+        android:name="com.example.mixnchat.ui.Settings.editpassword.EditPasswordFragment"
         android:label="fragment_edit_password"
         tools:layout="@layout/fragment_edit_password" />
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="com.example.mixnchat.ui.Settings.EditProfileFragment"
+        android:name="com.example.mixnchat.ui.Settings.editprofile.EditProfileFragment"
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" />
 </navigation>

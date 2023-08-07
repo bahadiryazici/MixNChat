@@ -1,4 +1,4 @@
-package com.example.mixnchat.utils
+package com.example.mixnchat.ui.mainpage.profile
 
 interface OnPostItemClickListener {
     fun onPostItemClick(postId : String)

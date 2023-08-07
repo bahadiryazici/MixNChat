@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.login
+package com.example.mixnchat.ui.login.signup
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -23,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentRegisterBinding
+import com.example.mixnchat.ui.login.RegisterFragmentDirections
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -89,9 +90,6 @@ class RegisterFragment : Fragment() {
         val biography = binding.biographyEditText.text.toString()
         val gender = binding.genderSpinner.selectedItem.toString()
         val phone = "+90${binding.phoneEditText.text}"
-
-
-
 
        if (email == "" || password == "" || biography == ""){
 
@@ -231,7 +229,6 @@ class RegisterFragment : Fragment() {
             // 2 - Auto-retrieval. On some devices Google Play services can automatically
             //     detect the incoming verification SMS and perform verification without
             //     user action.
-
         }
         override fun onVerificationFailed(e: FirebaseException) {
             // This callback is invoked in an invalid request for verification is made,
@@ -256,7 +253,11 @@ class RegisterFragment : Fragment() {
             // now need to ask the user to enter the code and then construct a credential
             // by combining the code with a verification ID.
             // Save verification ID and resending token so we can use them later
-            val action = RegisterFragmentDirections.actionRegisterFragmentToOTPFragment(verificationId,token,phone!!)
+            val action = RegisterFragmentDirections.actionRegisterFragmentToOTPFragment(
+                verificationId,
+                token,
+                phone!!
+            )
             findNavController().navigate(action)
         }
     }

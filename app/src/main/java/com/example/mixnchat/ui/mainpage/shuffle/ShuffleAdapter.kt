@@ -1,13 +1,13 @@
-package com.example.mixnchat.ui.mainpage
+package com.example.mixnchat.ui.mainpage.shuffle
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mixnchat.data.Users
 import com.example.mixnchat.databinding.RecyclerShuffleBinding
+import com.example.mixnchat.ui.mainpage.ShuffleFragmentDirections
 import com.squareup.picasso.Picasso
 
 
@@ -29,7 +29,8 @@ class ShuffleAdapter(private val userList : ArrayList<Users>) : RecyclerView.Ada
             Glide.with(holder.recyclerShuffleBinding.profilePhoto.context).asBitmap().load(userList[position].profileURL).into(holder.recyclerShuffleBinding.profilePhoto)
 
             holder.itemView.setOnClickListener {
-                val action = ShuffleFragmentDirections.actionShuffleFragmentToReviewedProfilPage(userList[position].userUid!!)
+                val action =
+                    ShuffleFragmentDirections.actionShuffleFragmentToReviewedProfilPage(userList[position].userUid!!)
                 Navigation.findNavController(it).navigate(action)
 
             }

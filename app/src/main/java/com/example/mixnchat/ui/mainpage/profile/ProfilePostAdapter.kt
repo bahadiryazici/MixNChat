@@ -1,11 +1,10 @@
-package com.example.mixnchat.ui.mainpage
+package com.example.mixnchat.ui.mainpage.profile
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mixnchat.data.Posts
 import com.example.mixnchat.databinding.RecyclerProfilePhotosBinding
-import com.example.mixnchat.utils.OnPostItemClickListener
 import com.squareup.picasso.Picasso
 
 class ProfilePostAdapter(private val postList: ArrayList<Posts>, private val onItemClickListener: OnPostItemClickListener) : RecyclerView.Adapter<ProfilePostAdapter.PostViewHolder>() {

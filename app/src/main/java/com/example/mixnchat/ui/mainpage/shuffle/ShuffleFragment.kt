@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.mainpage
+package com.example.mixnchat.ui.mainpage.shuffle
 
 import android.content.Context
 import android.os.Bundle
@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mixnchat.data.Users
 import com.example.mixnchat.databinding.FragmentShuffleBinding

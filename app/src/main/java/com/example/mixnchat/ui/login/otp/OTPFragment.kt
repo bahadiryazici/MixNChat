@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.login
+package com.example.mixnchat.ui.login.otp
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -16,6 +16,7 @@ import android.widget.Toast
 import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentOTPBinding
+import com.example.mixnchat.ui.login.OTPFragmentArgs
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth

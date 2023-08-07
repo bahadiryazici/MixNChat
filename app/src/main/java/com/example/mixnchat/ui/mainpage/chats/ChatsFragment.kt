@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.mainpage
+package com.example.mixnchat.ui.mainpage.chats
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

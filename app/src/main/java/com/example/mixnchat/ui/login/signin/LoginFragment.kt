@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.login
+package com.example.mixnchat.ui.login.signin
 
 
 
@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.databinding.FragmentLoginBinding
+import com.example.mixnchat.ui.login.LoginFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore

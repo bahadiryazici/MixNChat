@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.mainpage
+package com.example.mixnchat.ui.mainpage.profile
 
 import android.app.Activity
 import android.content.Context
@@ -22,7 +22,6 @@ import com.example.mixnchat.R
 import com.example.mixnchat.data.Posts
 import com.example.mixnchat.databinding.FragmentProfileBinding
 import com.example.mixnchat.ui.Settings.SettingsActivity
-import com.example.mixnchat.utils.OnPostItemClickListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -31,7 +30,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
-import com.squareup.picasso.Picasso
 import java.util.UUID
 
 class ProfileFragment : Fragment() {
@@ -183,7 +181,7 @@ class ProfileFragment : Fragment() {
                     postList.add(post)
                 }
                 binding.recyclerView.layoutManager = GridLayoutManager(mcontext,3,GridLayoutManager.VERTICAL,false)
-                profilePostAdapter = ProfilePostAdapter(postList, object : OnPostItemClickListener{
+                profilePostAdapter = ProfilePostAdapter(postList, object : OnPostItemClickListener {
                     override fun onPostItemClick(postId: String) {
                         val bottomSheetFragment = DeletePostBottomSheetFragment.newInstance(postId)
                         bottomSheetFragment.show(parentFragmentManager,bottomSheetFragment.tag)

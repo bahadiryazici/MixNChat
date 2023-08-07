@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.mainpage
+package com.example.mixnchat.ui.mainpage.shuffle
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,7 +13,9 @@ import com.bumptech.glide.Glide
 import com.example.mixnchat.R
 import com.example.mixnchat.data.Posts
 import com.example.mixnchat.databinding.FragmentReviewedProfilPageBinding
-import com.example.mixnchat.utils.OnPostItemClickListener
+import com.example.mixnchat.ui.mainpage.ReviewedProfilePageArgs
+import com.example.mixnchat.ui.mainpage.profile.ProfilePostAdapter
+import com.example.mixnchat.ui.mainpage.profile.OnPostItemClickListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -73,7 +73,8 @@ class ReviewedProfilePage : Fragment(){
                     postList.add(post)
                 }
                 binding.recyclerView.layoutManager = GridLayoutManager(requireContext(),3,GridLayoutManager.VERTICAL,false)
-                profilePostAdapter = ProfilePostAdapter(postList, object : OnPostItemClickListener{ override fun onPostItemClick(postId: String) {} })
+                profilePostAdapter = ProfilePostAdapter(postList, object :
+                    OnPostItemClickListener { override fun onPostItemClick(postId: String) {} })
                 binding.recyclerView.adapter = profilePostAdapter
                 profilePostAdapter.notifyDataSetChanged()
             }
@@ -224,7 +225,8 @@ class ReviewedProfilePage : Fragment(){
                         imageView6.visibility = View.INVISIBLE
                         photoProfile.setImageResource(R.drawable.blocked_icon)
                         imageView.setImageResource(R.drawable.blocked_icon)
-                        recyclerView.adapter = ProfilePostAdapter(arrayListOf(),object : OnPostItemClickListener{ override fun onPostItemClick(postId: String) {} })
+                        recyclerView.adapter = ProfilePostAdapter(arrayListOf(),object :
+                            OnPostItemClickListener { override fun onPostItemClick(postId: String) {} })
                         Toast.makeText(requireContext(),"You have been blocked!", Toast.LENGTH_LONG).show()
                     }
                 }

@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.Settings
+package com.example.mixnchat.ui.Settings.editmail
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

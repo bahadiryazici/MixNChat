@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.Settings
+package com.example.mixnchat.ui.Settings.editprofile
 
 import android.app.Activity
 import android.content.Intent

@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/chatsFragment"
-        android:name="com.example.mixnchat.ui.mainpage.ChatsFragment"
+        android:name="com.example.mixnchat.ui.mainpage.chats.ChatsFragment"
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.mixnchat.ui.mainpage.ProfileFragment"
+        android:name="com.example.mixnchat.ui.mainpage.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/shuffleFragment"
-        android:name="com.example.mixnchat.ui.mainpage.ShuffleFragment"
+        android:name="com.example.mixnchat.ui.mainpage.shuffle.ShuffleFragment"
         android:label="fragment_shuffle"
         tools:layout="@layout/fragment_shuffle" >
         <action
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/reviewedProfilPage"
-        android:name="com.example.mixnchat.ui.mainpage.ReviewedProfilePage"
+        android:name="com.example.mixnchat.ui.mainpage.shuffle.ReviewedProfilePage"
         android:label="fragment_reviewed_profil_page"
         tools:layout="@layout/fragment_reviewed_profil_page" >
         <argument
