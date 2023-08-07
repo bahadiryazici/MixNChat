@@ -1,18 +1,18 @@
-package com.example.mixnchat.ui.login
+package com.example.mixnchat.ui.Settings
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import androidx.navigation.findNavController
 import com.example.mixnchat.R
 
-
-class LoginActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_settings)
     }
+
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.fragmentContainerView)
+        val navController = findNavController(R.id.fragmentView)
         return navController.navigateUp()
     }
 }

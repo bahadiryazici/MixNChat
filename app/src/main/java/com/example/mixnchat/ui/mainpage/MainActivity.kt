@@ -2,7 +2,6 @@ package com.example.mixnchat.ui.mainpage
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -18,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val navView : BottomNavigationView = findViewById(R.id.bottomNavigationView)
         navView.setupWithNavController(navController)
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

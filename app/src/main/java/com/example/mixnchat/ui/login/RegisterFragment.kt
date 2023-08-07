@@ -39,7 +39,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import java.io.IOException
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 
@@ -91,10 +90,8 @@ class RegisterFragment : Fragment() {
         val gender = binding.genderSpinner.selectedItem.toString()
         val phone = "+90${binding.phoneEditText.text}"
 
-        val uuid = UUID.randomUUID()
-        val imageName = "$uuid.jpg"
 
-        val imageReference = storage.reference.child("profilePhotos").child(imageName)
+
 
        if (email == "" || password == "" || biography == ""){
 
@@ -109,6 +106,8 @@ class RegisterFragment : Fragment() {
 
        }*/else{
                auth.createUserWithEmailAndPassword(email,password).addOnSuccessListener {
+                   val imageName = "${auth.currentUser!!.uid}.jpg"
+                   val imageReference = storage.reference.child("profilePhotos").child(imageName)
                    if(selectedPicture != null){
                        auth.currentUser?.sendEmailVerification()?.addOnCompleteListener {
                            if(it.isSuccessful) {

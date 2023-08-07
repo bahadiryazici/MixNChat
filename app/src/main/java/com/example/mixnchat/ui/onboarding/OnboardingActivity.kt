@@ -2,7 +2,6 @@ package com.example.mixnchat.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mixnchat.R

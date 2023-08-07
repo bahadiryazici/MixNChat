@@ -8,223 +8,244 @@
     android:background="#fff"
     tools:context=".ui.mainpage.ReviewedProfilePage">
 
-    <ScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ScrollView
+            android:id="@+id/scrollView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="391dp"
+            android:layout_height="754dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/options_menu_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/photoProfile"
+                    app:civ_border_color="#242760"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/imageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="140dp"
+                    android:src="@drawable/pp" />
+
+                <TextView
+                    android:id="@+id/textView10"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/photoProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/inter"
+                    android:text="Melissa Peters"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    app:layout_constraintEnd_toStartOf="@+id/textView11"
+                    app:layout_constraintStart_toStartOf="@+id/photoProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/textView10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:src="@drawable/location_icon" />
+
+                <TextView
+                    android:id="@+id/textView11"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/imageView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/inter"
+                    android:text="Nigeria"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/followersCountText"
+                    app:layout_constraintEnd_toStartOf="@+id/followingCountText"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginEnd="62dp"
+                    android:fontFamily="@font/inter"
+                    android:text="122"
+                    android:textColor="#FF8A00"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView20"
+                    app:layout_constraintEnd_toEndOf="@+id/followersCountText"
+                    app:layout_constraintStart_toStartOf="@+id/followersCountText"
+                    app:layout_constraintTop_toBottomOf="@+id/followersCountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:text="Followers"
+                    android:textColor="#544C4C"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/followingCountText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/followersCountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:text="67"
+                    android:textColor="#FF8A00"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView22"
+                    app:layout_constraintEnd_toEndOf="@+id/followingCountText"
+                    app:layout_constraintStart_toStartOf="@+id/followingCountText"
+                    app:layout_constraintTop_toBottomOf="@+id/followingCountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Following"
+                    android:textColor="#544C4C"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/speechCountText"
+                    app:layout_constraintStart_toEndOf="@+id/followingCountText"
+                    app:layout_constraintTop_toTopOf="@+id/followingCountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="62dp"
+                    android:fontFamily="@font/inter"
+                    android:text="37"
+                    android:textColor="#FF8A00"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView24"
+                    app:layout_constraintEnd_toEndOf="@+id/speechCountText"
+                    app:layout_constraintStart_toStartOf="@+id/speechCountText"
+                    app:layout_constraintTop_toBottomOf="@+id/speechCountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Speech"
+                    android:textColor="#544C4C"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/textView25"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView22"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter"
+                    android:lineHeight="11sp"
+                    android:maxLines="5"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore etdolore magna aliqua."
+                    android:textColor="#544C4C"
+                    android:textSize="13sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/textView26"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:text="Photos"
+                    android:textColor="#FF8A00"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/view3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView26"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="34dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginEnd="34dp"
+                    android:background="@drawable/line_style" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    app:layout_constraintEnd_toEndOf="@+id/view3"
+                    app:layout_constraintStart_toStartOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/view3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp" />
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:src="@drawable/start_chat_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="145dp"
+        android:layout_height="127dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="391dp"
-        android:layout_height="754dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/options_menu_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="0dp"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/photoProfile"
-                app:civ_border_color="#242760"
-                app:civ_border_width="1dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageView"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="140dp"
-                android:src="@drawable/pp" />
-
-            <TextView
-                android:id="@+id/textView10"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/photoProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/inter"
-                android:text="Melissa Peters"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="normal" />
-
-            <ImageView
-                android:id="@+id/imageView7"
-                app:layout_constraintEnd_toStartOf="@+id/textView11"
-                app:layout_constraintStart_toStartOf="@+id/photoProfile"
-                app:layout_constraintTop_toBottomOf="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:src="@drawable/location_icon" />
-
-            <TextView
-                android:id="@+id/textView11"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/inter"
-                android:text="Nigeria"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/followersCountText"
-                app:layout_constraintEnd_toStartOf="@+id/followingCountText"
-                app:layout_constraintTop_toBottomOf="@+id/imageView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:layout_marginEnd="62dp"
-                android:fontFamily="@font/inter"
-                android:text="122"
-                android:textColor="#FF8A00"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView20"
-                app:layout_constraintEnd_toEndOf="@+id/followersCountText"
-                app:layout_constraintStart_toStartOf="@+id/followersCountText"
-                app:layout_constraintTop_toBottomOf="@+id/followersCountText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter"
-                android:text="Followers"
-                android:textColor="#544C4C"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/followingCountText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/followersCountText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter"
-                android:text="67"
-                android:textColor="#FF8A00"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView22"
-                app:layout_constraintEnd_toEndOf="@+id/followingCountText"
-                app:layout_constraintStart_toStartOf="@+id/followingCountText"
-                app:layout_constraintTop_toBottomOf="@+id/followingCountText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Following"
-                android:textColor="#544C4C"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/speechCountText"
-                app:layout_constraintStart_toEndOf="@+id/followingCountText"
-                app:layout_constraintTop_toTopOf="@+id/followingCountText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="62dp"
-                android:fontFamily="@font/inter"
-                android:text="37"
-                android:textColor="#FF8A00"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView24"
-                app:layout_constraintEnd_toEndOf="@+id/speechCountText"
-                app:layout_constraintStart_toStartOf="@+id/speechCountText"
-                app:layout_constraintTop_toBottomOf="@+id/speechCountText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Speech"
-                android:textColor="#544C4C"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/textView25"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/inter"
-                android:lineHeight="11sp"
-                android:maxLines="5"
-                android:paddingStart="30dp"
-                android:paddingEnd="30dp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore etdolore magna aliqua."
-                android:textColor="#544C4C"
-                android:textSize="13sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/textView26"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:text="Photos"
-                android:textColor="#FF8A00"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/view3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView26"
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                android:layout_marginStart="34dp"
-                android:layout_marginTop="7dp"
-                android:layout_marginEnd="34dp"
-                android:background="@drawable/line_style" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                app:layout_constraintEnd_toEndOf="@+id/view3"
-                app:layout_constraintStart_toStartOf="@+id/view3"
-                app:layout_constraintTop_toBottomOf="@+id/view3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp" />
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:src="@drawable/start_chat_icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+        app:lottie_rawRes="@raw/animation_lkwpajwx" />
 </androidx.constraintlayout.widget.ConstraintLayout>
