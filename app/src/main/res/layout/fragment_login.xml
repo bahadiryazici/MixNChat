@@ -23,47 +23,51 @@
                 android:src="@drawable/icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription,ImageContrastCheck" />
 
             <EditText
                 android:id="@+id/passwordEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:background="@drawable/mail_edit_text_style"
                 android:ems="10"
                 android:fontFamily="@font/inter"
-                android:layout_marginTop="32dp"
-                android:hint="Enter your password"
+                android:hint="@string/enter_your_password"
                 android:inputType="textPassword"
                 android:paddingStart="50dp"
                 android:paddingEnd="30dp"
                 app:layout_constraintEnd_toEndOf="@+id/mailEdit"
                 app:layout_constraintStart_toStartOf="@+id/mailEdit"
-                app:layout_constraintTop_toBottomOf="@+id/mailEdit" />
+                app:layout_constraintTop_toBottomOf="@+id/mailEdit"
+                tools:ignore="Autofill,TextContrastCheck" />
 
             <TextView
                 android:id="@+id/signUpText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter"
-                android:text="Sign Up"
+                android:text="@string/sign_up"
                 android:textColor="#FF8A00"
                 android:textSize="18sp"
                 app:layout_constraintStart_toEndOf="@+id/textView4"
-                app:layout_constraintTop_toTopOf="@id/textView4" />
+                app:layout_constraintTop_toTopOf="@id/textView4"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="280dp"
                 android:layout_height="44dp"
                 android:fontFamily="@font/inter"
-                android:text="Please enter your e-mail address and enter password"
+                android:text="@string/please_enter_your_e_mail_address_and_enter_password"
                 android:textAlignment="center"
                 android:textColor="#888888"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/app_Icon" />
+                app:layout_constraintTop_toBottomOf="@+id/app_Icon"
+                tools:ignore="TextSizeCheck" />
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -73,23 +77,25 @@
                 android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/passwordEdit"
                 app:layout_constraintStart_toStartOf="@+id/passwordEdit"
-                app:layout_constraintTop_toTopOf="@+id/passwordEdit" />
+                app:layout_constraintTop_toTopOf="@+id/passwordEdit"
+                tools:ignore="ContentDescription" />
 
             <EditText
                 android:id="@+id/mailEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
                 android:background="@drawable/mail_edit_text_style"
                 android:ems="10"
-                android:layout_marginTop="48dp"
                 android:fontFamily="@font/inter"
-                android:hint="Enter your e-mail"
+                android:hint="@string/enter_your_e_mail"
                 android:inputType="text"
                 android:paddingStart="50dp"
                 android:paddingEnd="30dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                tools:ignore="Autofill,TextContrastCheck" />
 
             <Button
                 android:id="@+id/loginButton"
@@ -98,11 +104,12 @@
                 android:layout_marginTop="18dp"
                 android:backgroundTint="#FF8A00"
                 android:fontFamily="@font/inter"
-                android:text="Login"
+                android:text="@string/login"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/forgetPassword" />
+                app:layout_constraintTop_toBottomOf="@+id/forgetPassword"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -111,7 +118,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="60dp"
                 android:fontFamily="@font/inter"
-                android:text="Don’t have an account? "
+                android:text="@string/don_t_have_an_account"
                 android:textColor="#888888"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +133,8 @@
                 android:src="@drawable/message"
                 app:layout_constraintBottom_toBottomOf="@+id/mailEdit"
                 app:layout_constraintStart_toStartOf="@+id/mailEdit"
-                app:layout_constraintTop_toTopOf="@+id/mailEdit" />
+                app:layout_constraintTop_toTopOf="@+id/mailEdit"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/forgetPassword"
@@ -134,12 +142,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/inter"
-                android:text="Forget password?"
+                android:text="@string/forget_password"
                 android:textColor="#FF8A00"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/passwordEdit" />
+                app:layout_constraintTop_toBottomOf="@+id/passwordEdit"
+                tools:ignore="TextContrastCheck" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

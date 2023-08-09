@@ -2,7 +2,6 @@ package com.example.mixnchat.ui.Settings.editprofile
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -17,19 +16,10 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentEditProfileBinding
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
+import com.example.mixnchat.utils.AndroidUtil
+import com.example.mixnchat.utils.FirebaseUtil
 import java.io.IOException
 
 
@@ -37,16 +27,14 @@ class EditProfileFragment : Fragment() {
 
     private var _binding : FragmentEditProfileBinding ?= null
     private val binding get() = _binding!!
-    private lateinit var auth : FirebaseAuth
-    private lateinit var storage: FirebaseStorage
-    private lateinit var firestore: FirebaseFirestore
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private var selectedPicture : Uri? = null
     private var selectedBitmap : Bitmap? = null
-    private var phone : Any ?= null
+    private val firebaseUtil = FirebaseUtil()
+    private val androidUtil = AndroidUtil()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentEditProfileBinding.inflate(layoutInflater,container,false)
         init()
@@ -54,9 +42,6 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun init() {
-        auth = Firebase.auth
-        storage = Firebase.storage
-        firestore = Firebase.firestore
         getProfile()
         registerLauncher()
     }
@@ -76,36 +61,18 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun setPhoto() {
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Snackbar.make(requireView(), requireActivity().getString(R.string.permission), Snackbar.LENGTH_INDEFINITE).setAction("Give Permission"
-                ) {
-                    permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                }.show()
-            } else {
-                permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
-        } else {
-            val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            activityResultLauncher.launch(intentToGallery)
-
-        }
-
+         androidUtil.askPermission(requireContext(),requireActivity(),requireView(),permissionLauncher, activityResultLauncher)
     }
 
     private fun getProfile(){
-        with(binding){
-            animationView.playAnimation()
-            scrollView.visibility = View.INVISIBLE
-        }
-        firestore.collection("Users").document(auth.currentUser!!.uid).get().addOnSuccessListener {
+        androidUtil.startAnimation(binding.animationView,binding.scrollView)
+        firebaseUtil.getAllUser().document(firebaseUtil.currentUserId()).get().addOnSuccessListener {
             if (it.exists()){
              val ppUrl = it.getString("profileUrl")
              val biography = it.getString("biography")
              val country = it.getString("country")
              val gender = it.getString("gender")
              val username = it.getString("username")
-             phone = it.getString("phone").toString()
              with(binding){
                  Glide.with(requireContext()).load(ppUrl).into(editProfilePhotoImageView)
                  bioEditText.setText(biography.toString())
@@ -114,12 +81,7 @@ class EditProfileFragment : Fragment() {
                  nameEditText.setText(username.toString())
              }
             }
-            with(binding){
-                animationView.pauseAnimation()
-                animationView.cancelAnimation()
-                animationView.visibility = View.INVISIBLE
-                scrollView.visibility = View.VISIBLE
-            }
+           androidUtil.stopAnimation(binding.animationView,binding.scrollView)
         }.addOnFailureListener {
             Toast.makeText(requireContext(),it.localizedMessage, Toast.LENGTH_LONG).show()
         }
@@ -135,44 +97,42 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun uploadUser() {
-        val imageName = "${auth.currentUser!!.uid}.jpg"
-        val imageReference = storage.reference.child("profilePhotos").child(imageName)
+        val imageName = "${firebaseUtil.currentUserId()}.jpg"
+        val imageReference = firebaseUtil.getProfilePhotoFromStorage().child(imageName)
         val username = binding.nameEditText.text.toString()
         val country = binding.countrySpinner.selectedItem.toString()
         val gender = binding.genderSpinner.selectedItem.toString()
         val biography = binding.bioEditText.text.toString()
         imageReference.delete().addOnSuccessListener {
-                val newImageReference = storage.reference.child("profilePhotos").child(imageName)
+                val newImageReference = firebaseUtil.getProfilePhotoFromStorage().child(imageName)
                 if (selectedPicture != null) {
                     newImageReference.putFile(selectedPicture!!).addOnSuccessListener {
                         imageReference.downloadUrl.addOnSuccessListener { uri->
                             val ppUri = uri.toString()
                             val user = hashMapOf<String,Any>()
-                            user["userUid"] = auth.currentUser!!.uid
+                            user["userUid"] = firebaseUtil.currentUserId()
                             user["profileUrl"] = ppUri
                             user["username"] = username
                             user["country"] = country
                             user["gender"] = gender
                             user["biography"] = biography
-                            user["phone"] = phone as Any
                             user["speech"] = ""
-                            firestore.collection("Users").document(auth.currentUser!!.uid).set(user).addOnSuccessListener {
-                                Toast.makeText(requireContext(),"Profile update has been done", Toast.LENGTH_LONG).show()
+                            firebaseUtil.getAllUser().document(firebaseUtil.currentUserId()).set(user).addOnSuccessListener {
+                                androidUtil.showToast(requireContext(),"Profile update has been done")
                                 parentFragmentManager.popBackStack()
                             }.addOnFailureListener {
-                                Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
+                                androidUtil.showToast(requireContext(),it.localizedMessage!!)
                             }
 
                         }.addOnFailureListener {
-                            Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
+                            androidUtil.showToast(requireContext(),it.localizedMessage!!)
                         }
                     }.addOnFailureListener {
-                        Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
+                        androidUtil.showToast(requireContext(),it.localizedMessage!!)
                     }
                 }
-
         }.addOnFailureListener {
-                Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(requireContext(),it.localizedMessage!!)
         }
 
     }
@@ -215,8 +175,4 @@ class EditProfileFragment : Fragment() {
             }
         }
     }
-
-
-
-
 }

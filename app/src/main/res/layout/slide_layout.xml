@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    tools:context=".ui.onboarding.screens.FirstScreen">
+    >
 
 
     <ImageView
@@ -15,7 +16,8 @@
         android:src="@drawable/highfive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/slideHeading"
@@ -25,29 +27,31 @@
         android:layout_marginRight="20dp"
         android:fontFamily="@font/rockwell_bold"
         android:gravity="center_horizontal|top"
-        android:text="Create Your Profile"
+        android:text="@string/create_your_profile"
         android:textAlignment="center"
         android:textColor="#3F3D56"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slideImage" />
+        app:layout_constraintTop_toBottomOf="@+id/slideImage"
+        tools:ignore="TextSizeCheck" />
 
     <TextView
         android:id="@+id/slideDescription"
         android:layout_width="308dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="The first step is to create a great profile that introduces yourself! Add your own photos, share your hobbies and interests. So other users can get to know you better and find common points."
-        android:textAlignment="center"
         android:layout_marginLeft="50dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="50dp"
         android:fontFamily="@font/inter"
+        android:text="@string/the_first_step_is_to_create_a_great_profile_that_introduces_yourself_add_your_own_photos_share_your_hobbies_and_interests_so_other_users_can_get_to_know_you_better_and_find_common_points"
+        android:textAlignment="center"
         android:textColor="#B2B2B2"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.388"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slideHeading" />
+        app:layout_constraintTop_toBottomOf="@+id/slideHeading"
+        tools:ignore="TextSizeCheck,TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

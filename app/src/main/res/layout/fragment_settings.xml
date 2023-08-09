@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:text="Settings"
+        android:text="@string/settings"
         android:fontFamily="@font/inter"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -31,14 +31,15 @@
         android:layout_marginTop="48dp"
         android:src="@drawable/back_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Account"
+        android:text="@string/account"
         android:fontFamily="@font/inter"
         android:textColor="#000000"
         android:textStyle="bold"
@@ -52,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/inter"
-        android:text="Support &amp; About"
+        android:text="@string/support_amp_about"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -85,7 +86,8 @@
                 android:layout_marginTop="12dp"
                 android:src="@drawable/edit_profile_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/editProfileText"
@@ -93,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="36dp"
                 android:layout_marginTop="6dp"
-                android:text="Edit Profile"
+                android:text="@string/edit_profile"
                 android:fontFamily="@font/inter"
                 android:textColor="#000000"
                 android:textSize="16sp"
@@ -108,7 +110,8 @@
                 android:layout_marginTop="12dp"
                 android:src="@drawable/edit_password_icon"
                 app:layout_constraintStart_toStartOf="@+id/editProfileIcon"
-                app:layout_constraintTop_toBottomOf="@+id/editProfileIcon" />
+                app:layout_constraintTop_toBottomOf="@+id/editProfileIcon"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/editPasswordText"
@@ -116,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:fontFamily="@font/inter"
-                android:text="Edit Password"
+                android:text="@string/edit_password"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -130,7 +133,8 @@
                 android:layout_marginTop="12dp"
                 android:src="@drawable/edit_mail_icon"
                 app:layout_constraintStart_toStartOf="@+id/editPasswordIcon"
-                app:layout_constraintTop_toBottomOf="@+id/editPasswordIcon" />
+                app:layout_constraintTop_toBottomOf="@+id/editPasswordIcon"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/editEmailText"
@@ -138,7 +142,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/inter"
-                android:text="Edit E-mail"
+                android:text="@string/edit_email"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -172,7 +176,8 @@
                 android:layout_marginTop="12dp"
                 android:src="@drawable/help_suppport_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/helpSupportText"
@@ -181,7 +186,7 @@
                 android:layout_marginStart="36dp"
                 android:layout_marginTop="6dp"
                 android:fontFamily="@font/inter"
-                android:text="Help &amp; Support"
+                android:text="@string/help_amp_support"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -195,7 +200,8 @@
                 android:layout_marginTop="12dp"
                 android:src="@drawable/terms_policies_icon"
                 app:layout_constraintStart_toStartOf="@+id/helpSupportIcon"
-                app:layout_constraintTop_toBottomOf="@+id/helpSupportIcon" />
+                app:layout_constraintTop_toBottomOf="@+id/helpSupportIcon"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/termsPoliciesText"
@@ -203,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:fontFamily="@font/inter"
-                android:text="Terms and Policies"
+                android:text="@string/terms_and_policies"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -217,7 +223,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Actions"
+        android:text="@string/actions"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -249,7 +255,8 @@
                 android:layout_marginTop="12dp"
                 android:src="@drawable/report_problem_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/reportProblemText"
@@ -258,7 +265,7 @@
                 android:layout_marginStart="36dp"
                 android:layout_marginTop="6dp"
                 android:fontFamily="@font/inter"
-                android:text="Report a problem"
+                android:text="@string/report_a_problem"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -272,14 +279,15 @@
                 android:layout_marginTop="12dp"
                 android:src="@drawable/logout_icon"
                 app:layout_constraintStart_toStartOf="@+id/reportProblemIcon"
-                app:layout_constraintTop_toBottomOf="@+id/reportProblemIcon" />
+                app:layout_constraintTop_toBottomOf="@+id/reportProblemIcon"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/logOutText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Log out"
+                android:text="@string/log_out"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"

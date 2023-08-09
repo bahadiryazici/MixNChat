@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.mixnchat.databinding.FragmentEditEmailBinding
+import com.example.mixnchat.utils.AndroidUtil
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -18,8 +19,9 @@ class EditEmailFragment : Fragment() {
     private var _binding : FragmentEditEmailBinding ?= null
     private val binding get() = _binding!!
     private lateinit var auth : FirebaseAuth
+    private val androidUtil = AndroidUtil()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentEditEmailBinding.inflate(layoutInflater,container,false)
         init()
@@ -53,25 +55,23 @@ class EditEmailFragment : Fragment() {
         }else if (password.isEmpty()){
             binding.passwordEditText.error = "Field can't be empty!"
         }else{
-                auth.currentUser!!.reauthenticate(authCredential).addOnSuccessListener {
-                  auth.currentUser!!.updateEmail(newMail).addOnSuccessListener {
-                        auth.currentUser!!.sendEmailVerification().addOnCompleteListener {
-                            if(it.isSuccessful){
-                                Toast.makeText(requireContext(),"E-mail successfully updated!", Toast.LENGTH_LONG).show()
-                                parentFragmentManager.popBackStack()
-                            }else{
-                                val errorMessage = it.exception?.message
-                                Toast.makeText(requireContext(),errorMessage,Toast.LENGTH_LONG).show()
-                            }
-                  }.addOnFailureListener {
-                      Toast.makeText(requireContext(),it.localizedMessage, Toast.LENGTH_LONG).show()
-                  }
+            auth.currentUser!!.reauthenticate(authCredential).addOnSuccessListener {
+                auth.currentUser!!.updateEmail(newMail).addOnSuccessListener {
+                    auth.currentUser!!.sendEmailVerification().addOnCompleteListener {
+                        if(it.isSuccessful){
+                            Toast.makeText(requireContext(),"E-mail successfully updated!", Toast.LENGTH_LONG).show()
+                            parentFragmentManager.popBackStack()
+                        }else{
+                            val errorMessage = it.exception?.message
+                            androidUtil.showToast(requireContext(),errorMessage!!)
+                        }
+                    }.addOnFailureListener {
+                        androidUtil.showToast(requireContext(),it.localizedMessage!!)
+                    }
                 }.addOnFailureListener {
-                    Toast.makeText(requireContext(),it.localizedMessage, Toast.LENGTH_LONG).show()
+                    androidUtil.showToast(requireContext(),it.localizedMessage!!)
                 }
+            }
         }
-
-
-    }
     }
 }

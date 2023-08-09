@@ -17,7 +17,7 @@
         android:layout_marginTop="18dp"
         android:iconifiedByDefault="false"
         android:queryBackground="@null"
-        android:queryHint="Search Username"
+        android:queryHint="@string/search_username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

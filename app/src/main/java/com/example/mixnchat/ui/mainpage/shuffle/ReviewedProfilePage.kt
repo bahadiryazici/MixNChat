@@ -8,33 +8,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.mixnchat.R
 import com.example.mixnchat.data.Posts
 import com.example.mixnchat.databinding.FragmentReviewedProfilPageBinding
-import com.example.mixnchat.ui.mainpage.ReviewedProfilePageArgs
 import com.example.mixnchat.ui.mainpage.profile.ProfilePostAdapter
 import com.example.mixnchat.ui.mainpage.profile.OnPostItemClickListener
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
+import com.example.mixnchat.utils.AndroidUtil
+import com.example.mixnchat.utils.FirebaseUtil
 
 
 class ReviewedProfilePage : Fragment(){
 
     private var _binding : FragmentReviewedProfilPageBinding ?= null
     private val binding get() = _binding!!
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var auth : FirebaseAuth
     private var userUid : String ?= null
     private lateinit var profilePostAdapter : ProfilePostAdapter
+    private var username : String ?= null
+    private var profileUrl : String ?= null
+    private val androidUtil = AndroidUtil()
+    private val firebaseUtil = FirebaseUtil()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
 
        _binding = FragmentReviewedProfilPageBinding.inflate(layoutInflater,container,false)
@@ -43,12 +41,7 @@ class ReviewedProfilePage : Fragment(){
     }
 
     private fun init() {
-
-        firestore = Firebase.firestore
-        auth = Firebase.auth
-        arguments?.let {
-            userUid = ReviewedProfilePageArgs.fromBundle(it).userUid
-        }
+        getArgs()
         setReviewedProfile()
         setBackgroundImage()
         setPost()
@@ -56,9 +49,14 @@ class ReviewedProfilePage : Fragment(){
         blockedUser()
     }
 
+    private fun getArgs(){
+        arguments?.let {
+            userUid = ReviewedProfilePageArgs.fromBundle(it).userUid
+        }
+    }
     private fun setPost() {
         val postList = ArrayList<Posts>()
-        firestore.collection(userUid!! + "Posts").addSnapshotListener { value, error ->
+        firebaseUtil.getOtherUserPosts(userUid!!).addSnapshotListener { value, error ->
             if (error != null) {
                 Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_LONG).show()
                 return@addSnapshotListener
@@ -87,13 +85,23 @@ class ReviewedProfilePage : Fragment(){
             showPopup(it)
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
-            setReviewedProfile()
-            setBackgroundImage()
-            setPost()
-            reViewMyPage()
-            blockedUser()
-            binding.swipeRefreshLayout.isRefreshing = false
+            swipeRefresh()
+
         }
+        binding.chat.setOnClickListener {
+            findNavController().navigate(ReviewedProfilePageDirections.actionReviewedProfilPageToChatFragment(username!!,profileUrl!!,userUid!!))
+        }
+    }
+
+    private fun swipeRefresh() {
+        androidUtil.startAnimation(binding.animationView,binding.scrollView)
+        setReviewedProfile()
+        setBackgroundImage()
+        setPost()
+        reViewMyPage()
+        blockedUser()
+        binding.swipeRefreshLayout.isRefreshing = false
+        androidUtil.stopAnimation(binding.animationView,binding.scrollView)
     }
 
     private fun showPopup(v: View) {
@@ -104,20 +112,24 @@ class ReviewedProfilePage : Fragment(){
         popup.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId){
                 R.id.follow ->{
-                    firestore.collection(auth.currentUser!!.uid + "Following" ).document(userUid!!).set(hashMapOf("timestamp" to System.currentTimeMillis()))
-                    firestore.collection(userUid + "Followers").document(auth.currentUser!!.uid).set(hashMapOf("timestamp" to System.currentTimeMillis()))
+                    val user = hashMapOf<String,Any>()
+                    user["username"] = username.toString()
+                    user["profileUrl"] = profileUrl.toString()
+                    user["userUid"] = userUid.toString()
+                    firebaseUtil.getCurrentUserFollowing().document(userUid!!).set(user)
+                    firebaseUtil.getOtherUserFollowers(userUid!!).document(firebaseUtil.currentUserId()).set(hashMapOf("timestamp" to System.currentTimeMillis()))
                 }
                 R.id.block ->{
-                    firestore.collection(auth.currentUser!!.uid + "Blocks" ).document(userUid!!).set(hashMapOf("timestamp" to System.currentTimeMillis()))
-                    firestore.collection(auth.currentUser!!.uid + "Following").document(userUid!!).delete()
-                    firestore.collection(userUid + "Followers").document(auth.currentUser!!.uid).delete()
+                    firebaseUtil.getCurrentUserBlocks().document(userUid!!).set(hashMapOf("timestamp" to System.currentTimeMillis()))
+                    firebaseUtil.getCurrentUserFollowing().document(userUid!!).delete()
+                    firebaseUtil.getOtherUserFollowers(userUid!!).document(firebaseUtil.currentUserId()).delete()
                 }
                 R.id.unFollow ->{
-                    firestore.collection(auth.currentUser!!.uid + "Following").document(userUid!!).delete()
-                    firestore.collection(userUid + "Followers").document(auth.currentUser!!.uid).delete()
+                    firebaseUtil.getCurrentUserFollowing().document(userUid!!).delete()
+                    firebaseUtil.getOtherUserFollowers(userUid!!).document(firebaseUtil.currentUserId()).delete()
                 }
                 R.id.unBlock->{
-                    firestore.collection(auth.currentUser!!.uid + "Blocks").document(userUid!!).delete()
+                    firebaseUtil.getCurrentUserBlocks().document(userUid!!).delete()
                 }
             }
             true
@@ -126,9 +138,9 @@ class ReviewedProfilePage : Fragment(){
     }
 
     private fun popUpMenuStatement(popup : PopupMenu){
-        firestore.collection(auth.currentUser!!.uid + "Following").document(userUid!!).get().addOnSuccessListener {
-            if(it.exists()){
-                firestore.collection(auth.currentUser!!.uid + "Blocks").document(userUid!!).get().addOnSuccessListener {
+        firebaseUtil.getCurrentUserFollowing().document(userUid!!).get().addOnSuccessListener { documentSnapshot ->
+            if(documentSnapshot.exists()){
+                firebaseUtil.getCurrentUserBlocks().document(userUid!!).get().addOnSuccessListener {
                     if(it.exists()){
                         popup.menu.removeItem(R.id.block)
                         popup.menu.removeItem(R.id.follow)
@@ -138,7 +150,7 @@ class ReviewedProfilePage : Fragment(){
                     }
                 }
             }else{
-                firestore.collection(auth.currentUser!!.uid + "Blocks").document(userUid!!).get().addOnSuccessListener {
+                firebaseUtil.getCurrentUserBlocks().document(userUid!!).get().addOnSuccessListener {
                     if (it.exists()){
                         popup.menu.removeItem(R.id.block)
                         popup.menu.removeItem(R.id.unFollow)
@@ -153,15 +165,12 @@ class ReviewedProfilePage : Fragment(){
     }
 
     private fun setReviewedProfile(){
-        with(binding){
-            animationView.playAnimation()
-           scrollView.visibility = View.INVISIBLE
-        }
-        userUid?.let {
-            firestore.collection("Users").document(it).get().addOnSuccessListener {
+        androidUtil.startAnimation(binding.animationView,binding.scrollView)
+        userUid?.let { it ->
+            firebaseUtil.getAllUser().document(it).get().addOnSuccessListener {
                 if(it.exists()){
-                    val profileUrl = it.getString("profileUrl")
-                    val username = it.getString("username")
+                    profileUrl = it.getString("profileUrl")
+                    username = it.getString("username")
                     val country = it.getString("country")
                     val biography = it.getString("biography")
                     val speech = it.getString("speech")
@@ -181,70 +190,66 @@ class ReviewedProfilePage : Fragment(){
                         binding.textView25.text = biography
                     }
                     binding.textView10.text = username
-                    Picasso.get().load(profileUrl).into(binding.photoProfile)
+                    Glide.with(this).asBitmap().load(profileUrl).into(binding.photoProfile)
                 }else{
-                    Toast.makeText(requireContext(),"No users", Toast.LENGTH_LONG).show()
+                    androidUtil.showToast(requireContext(),"No users")
                 }
-                with(binding){
-                    animationView.pauseAnimation()
-                    animationView.cancelAnimation()
-                    animationView.visibility = View.INVISIBLE
-                    scrollView.visibility = View.VISIBLE
-                }
+              androidUtil.stopAnimation(binding.animationView,binding.scrollView)
             }.addOnFailureListener { error ->
-                Toast.makeText(requireContext(),error.localizedMessage,Toast.LENGTH_LONG).show()
+                androidUtil.showToast(requireContext(),error.localizedMessage!!)
             }
         }
-        firestore.collection(userUid + "Followers").get().addOnSuccessListener {
+        firebaseUtil.getOtherUserFollowers(userUid!!).get().addOnSuccessListener {
             val followers = it.size()
             binding.followersCountText.text = followers.toString()
         }.addOnFailureListener {
-            Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(requireContext(),it.localizedMessage!!)
         }
-        firestore.collection(userUid + "Following").get().addOnSuccessListener {
+        firebaseUtil.getOtherUserFollowing(userUid!!).get().addOnSuccessListener {
             val following = it.size()
             binding.followingCountText.text = following.toString()
         }.addOnFailureListener {
-            Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(requireContext(),it.localizedMessage!!)
         }
     }
 
     private fun reViewMyPage(){
-        if(userUid == auth.currentUser!!.uid){
+        if(userUid == firebaseUtil.currentUserId()){
             binding.imageView5.visibility = View.INVISIBLE
-            binding.imageView6.visibility = View.INVISIBLE
+            binding.chat.visibility = View.INVISIBLE
         }
     }
 
     private fun blockedUser(){
-        firestore.collection(userUid + "Blocks").document(auth.currentUser!!.uid).get().addOnSuccessListener {
+        firebaseUtil.getOtherUserBlocks(userUid!!).document(firebaseUtil.currentUserId()).get().addOnSuccessListener {
             if(it.exists()){
-                if (it.id == auth.currentUser!!.uid){
+                if (it.id == firebaseUtil.currentUserId()){
                     with(binding){
 
-                        imageView6.visibility = View.INVISIBLE
+                        chat.visibility = View.INVISIBLE
                         photoProfile.setImageResource(R.drawable.blocked_icon)
                         imageView.setImageResource(R.drawable.blocked_icon)
                         recyclerView.adapter = ProfilePostAdapter(arrayListOf(),object :
                             OnPostItemClickListener { override fun onPostItemClick(postId: String) {} })
-                        Toast.makeText(requireContext(),"You have been blocked!", Toast.LENGTH_LONG).show()
+                        androidUtil.showToast(requireContext(), "You have been blocked!")
                     }
                 }
             }
 
         }.addOnFailureListener {
-            Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(requireContext(),it.localizedMessage!!)
         }
     }
 
     private fun setBackgroundImage(){
-        firestore.collection(userUid!! + "Background").document(userUid!!).get().addOnSuccessListener {
+        firebaseUtil.getOtherUserBackground(userUid!!).document(userUid!!).get().addOnSuccessListener {
             if(it.exists()){
                 val profileBackgroundImageUrl = it.getString("Background")
                 Glide.with(this).asBitmap().load(profileBackgroundImageUrl).into(binding.imageView)
             }
         }.addOnFailureListener {
-            Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(requireContext(),it.localizedMessage!!)
         }
     }
+
 }

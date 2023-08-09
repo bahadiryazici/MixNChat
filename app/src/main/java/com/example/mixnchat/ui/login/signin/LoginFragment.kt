@@ -8,11 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import com.example.mixnchat.R
 import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.databinding.FragmentLoginBinding
-import com.example.mixnchat.ui.login.LoginFragmentDirections
+import com.example.mixnchat.utils.AndroidUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,9 +29,10 @@ class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore : FirebaseFirestore
     private lateinit var storage: FirebaseStorage
+    private val androidUtil = AndroidUtil()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(layoutInflater,container,false)
         init()
         return binding.root
@@ -68,8 +69,8 @@ class LoginFragment : Fragment() {
         val email = binding.mailEdit.text.toString()
         val password = binding.passwordEdit.text.toString()
         if(email == "" || password == ""){
-            binding.mailEdit.error = "Fill this field!"
-            binding.passwordEdit.error = "Fill this field!"
+            binding.mailEdit.error = this.getString(R.string.fillFieldMessage)
+            binding.passwordEdit.error =  this.getString(R.string.fillFieldMessage)
         }else{
             auth.signInWithEmailAndPassword(email,password).addOnSuccessListener {
                     if (auth.currentUser!!.isEmailVerified){
@@ -77,10 +78,10 @@ class LoginFragment : Fragment() {
                         startActivity(intent)
                         requireActivity().finish()
                     }else{
-                        Toast.makeText(requireContext(),"Please verify your mail address", Toast.LENGTH_LONG).show()
+                        androidUtil.showToast(requireContext(),this.getString(R.string.verifyMailMessage))
                     }
             }.addOnFailureListener {
-                    Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+                    androidUtil.showToast(requireContext(),it.localizedMessage!!)
             }
         }
     }

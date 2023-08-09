@@ -9,7 +9,14 @@
         android:id="@+id/chatsFragment"
         android:name="com.example.mixnchat.ui.mainpage.chats.ChatsFragment"
         android:label="fragment_chats"
-        tools:layout="@layout/fragment_chats" />
+        tools:layout="@layout/fragment_chats" >
+        <action
+            android:id="@+id/action_chatsFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_chatsFragment_to_reviewedProfilPage"
+            app:destination="@id/reviewedProfilPage" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.mixnchat.ui.mainpage.profile.ProfileFragment"
@@ -31,6 +38,24 @@
         tools:layout="@layout/fragment_reviewed_profil_page" >
         <argument
             android:name="userUid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_reviewedProfilPage_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.mixnchat.ui.mainpage.chats.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="username"
+            app:argType="string" />
+        <argument
+            android:name="profileUrl"
+            app:argType="string" />
+        <argument
+            android:name="userid"
             app:argType="string" />
     </fragment>
 </navigation>

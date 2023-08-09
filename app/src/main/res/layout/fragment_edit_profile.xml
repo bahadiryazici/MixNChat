@@ -37,7 +37,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/country_spinner"
                 app:layout_constraintStart_toStartOf="@+id/country_spinner"
                 app:layout_constraintTop_toBottomOf="@+id/genderTextView2"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
 
             <TextView
                 android:id="@+id/genderTextView2"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/inter"
-                android:text="Gender"
+                android:text="@string/gender"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -60,17 +60,17 @@
                 android:background="@drawable/username_edit_text_style"
                 android:ems="10"
                 android:fontFamily="@font/inter"
-                android:hint="Biography"
+                android:hint="@string/biography"
                 android:inputType="text"
+                android:maxLines="3"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:textColor="#544C4C"
                 android:textSize="14sp"
-                android:maxLines="3"
                 app:layout_constraintEnd_toEndOf="@+id/nameEditText"
                 app:layout_constraintStart_toStartOf="@+id/nameEditText"
                 app:layout_constraintTop_toBottomOf="@+id/textView31"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="Autofill,TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck,VisualLintTextFieldSize" />
 
             <TextView
                 android:id="@+id/textView31"
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/inter"
-                android:text="Biography"
+                android:text="@string/biography"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -91,13 +91,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="#FF8A00"
-                android:text="Save Changes"
                 android:layout_marginBottom="12dp"
+                android:backgroundTint="#FF8A00"
+                android:text="@string/save_changes"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gender_spinner" />
+                app:layout_constraintTop_toBottomOf="@+id/gender_spinner"
+                tools:ignore="TextContrastCheck" />
 
             <Spinner
                 android:id="@+id/country_spinner"
@@ -123,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/inter"
-                android:text="Country"
+                android:text="@string/country"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -136,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/inter"
-                android:text="Date of Birth"
+                android:text="@string/date_of_birth"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -157,14 +158,15 @@
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="@+id/nameEditText"
                 app:layout_constraintStart_toStartOf="@+id/nameEditText"
-                app:layout_constraintTop_toBottomOf="@+id/textView28" />
+                app:layout_constraintTop_toBottomOf="@+id/textView28"
+                tools:ignore="HardcodedText,RtlSymmetry,TextContrastCheck,VisualLintButtonSize" />
 
             <TextView
                 android:id="@+id/textView23"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
-                android:text="Edit Profile"
+                android:text="@string/edit_profile"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:fontFamily="@font/inter"
@@ -191,7 +193,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
-                android:text="Username"
+                android:text="@string/username"
                 android:textStyle="bold"
                 android:fontFamily="@font/inter"
                 android:textColor="#000000"
@@ -209,7 +211,7 @@
                 android:ellipsize="end"
                 android:ems="10"
                 android:fontFamily="@font/inter"
-                android:hint="Username"
+                android:hint="@string/username"
                 android:inputType="text"
                 android:maxLength="30"
                 android:maxLines="1"
@@ -220,7 +222,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/textView27"
                 app:layout_constraintTop_toBottomOf="@+id/textView27"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="Autofill,TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck,VisualLintTextFieldSize" />
 
             <ImageView
                 android:id="@+id/backImage"
@@ -230,7 +232,8 @@
                 android:layout_marginTop="48dp"
                 android:src="@drawable/back_arrow"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -243,5 +246,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_rawRes="@raw/animation_lkwpajwx" />
+        app:lottie_rawRes="@raw/animation_lkwpajwx"
+        tools:ignore="ImageContrastCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

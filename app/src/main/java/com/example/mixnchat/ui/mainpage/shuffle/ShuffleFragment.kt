@@ -11,13 +11,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mixnchat.data.Users
 import com.example.mixnchat.databinding.FragmentShuffleBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
+import com.example.mixnchat.utils.AndroidUtil
+import com.example.mixnchat.utils.FirebaseUtil
 import java.util.Random
 
 
@@ -25,14 +20,13 @@ class ShuffleFragment : Fragment() {
 
     private var _binding: FragmentShuffleBinding? = null
     private val binding get() = _binding!!
-    private lateinit var db: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth
-    private lateinit var storage: FirebaseStorage
     private lateinit var shuffleAdapter: ShuffleAdapter
     private lateinit var mcontext: Context
     private val userArrayList = ArrayList<Users>()
     var filteredList = ArrayList<Users>()
     val resultList = ArrayList<Users>()
+    private val androidUtil = AndroidUtil()
+    private val firebaseUtil = FirebaseUtil()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,22 +40,22 @@ class ShuffleFragment : Fragment() {
 
     private fun init() {
         mcontext = requireContext()
-        db = Firebase.firestore
-        auth = Firebase.auth
-        storage = Firebase.storage
         getUser()
         binding.swipeRefreshLayout.setOnRefreshListener {
-            getUser()
-            binding.searchView.setQuery("",false)
-            binding.searchView.isIconified = true
-            binding.swipeRefreshLayout.isRefreshing = false
+            swiperRefresh()
         }
         searchInFirebase()
         searchViewListener()
     }
 
+    private fun swiperRefresh() {
+        getUser()
+        binding.searchView.setQuery("",false)
+        binding.searchView.isIconified = true
+        binding.swipeRefreshLayout.isRefreshing = false
+    }
     private fun getUser() {
-        db.collection("Users").addSnapshotListener { snapshot, error ->
+        firebaseUtil.getAllUser().addSnapshotListener { snapshot, error ->
             if (error != null) {
                 Toast.makeText(mcontext, error.localizedMessage, Toast.LENGTH_LONG).show()
                 return@addSnapshotListener
@@ -93,10 +87,8 @@ class ShuffleFragment : Fragment() {
             }
         }
     }
-
-
     private fun searchInFirebase(){
-        db.collection("Users").get().addOnSuccessListener {
+        firebaseUtil.getAllUser().get().addOnSuccessListener {
             resultList.clear()
             for (document in it.documents) {
                 val userName = document.getString("username")
@@ -109,10 +101,9 @@ class ShuffleFragment : Fragment() {
                 }
             }
         }.addOnFailureListener {
-            Toast.makeText(requireContext(),it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(requireContext(),it.localizedMessage!!)
         }
     }
-
     private fun searchViewListener(){
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(p0: String?): Boolean {
@@ -125,13 +116,12 @@ class ShuffleFragment : Fragment() {
                     filteredList = resultList.filter {
                         it.username!!.lowercase().contains(p0.lowercase())
                     } as ArrayList<Users>
-                    updateRecyclerView(filteredList as ArrayList<Users>)
+                    updateRecyclerView(filteredList )
                 }
               return true
             }
         })
     }
-
     private fun updateRecyclerView(filteredList: ArrayList<Users>) {
         binding.recyclerView.layoutManager = LinearLayoutManager(mcontext)
         shuffleAdapter = ShuffleAdapter(filteredList)

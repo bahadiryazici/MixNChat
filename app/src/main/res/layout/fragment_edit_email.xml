@@ -37,9 +37,9 @@
             android:layout_marginHorizontal="10dp"
             android:background="#fff"
             android:fontFamily="@font/inter"
-            android:hint="Current Mail"
+            android:hint="@string/current_mail"
             android:padding="10dp"
-            tools:ignore="TouchTargetSizeCheck" />
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -70,10 +70,9 @@
             android:layout_marginHorizontal="10dp"
             android:background="#fff"
             android:fontFamily="@font/inter"
-            android:hint="New Mail"
-
+            android:hint="@string/new_mail"
             android:padding="10dp"
-            tools:ignore="TouchTargetSizeCheck" />
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -109,9 +108,10 @@
             android:layout_marginHorizontal="10dp"
             android:background="#fff"
             android:fontFamily="@font/inter"
-            android:hint="Current Password"
+            android:hint="@string/current_password"
             android:inputType="textPassword"
-            android:padding="10dp" />
+            android:padding="10dp"
+            tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -122,20 +122,21 @@
         android:layout_marginTop="48dp"
         android:backgroundTint="@color/orange"
         android:fontFamily="@font/inter"
-        android:text="Update Mail"
+        android:text="@string/update_mail"
         android:textColor="#fff"
         android:textSize="18sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3"
+        tools:ignore="TextContrastCheck" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:text="Edit Email"
+        android:text="@string/edit_email"
         android:fontFamily="@font/inter"
         android:textStyle="bold"
         android:textSize="20sp"
@@ -152,5 +153,6 @@
         android:layout_marginTop="48dp"
         android:src="@drawable/back_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 </androidx.constraintlayout.widget.ConstraintLayout>

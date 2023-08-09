@@ -3,7 +3,6 @@ package com.example.mixnchat.ui.mainpage.profile
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,37 +13,28 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.mixnchat.R
 import com.example.mixnchat.data.Posts
 import com.example.mixnchat.databinding.FragmentProfileBinding
 import com.example.mixnchat.ui.Settings.SettingsActivity
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
+import com.example.mixnchat.utils.AndroidUtil
+import com.example.mixnchat.utils.FirebaseUtil
 import java.util.UUID
 
 class ProfileFragment : Fragment() {
 
     private var _binding : FragmentProfileBinding ?= null
     private val binding get() = _binding!!
-    private lateinit var auth : FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var storage: FirebaseStorage
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var activityResultLauncherForBackground: ActivityResultLauncher<Intent>
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private lateinit var mcontext: Context
     private var selectedPicture : Uri? = null
     private var backgroundPhoto : Uri? = null
+    private val androidUtil = AndroidUtil()
+    private val firebaseUtil = FirebaseUtil()
     private lateinit var profilePostAdapter : ProfilePostAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View {
@@ -56,9 +46,6 @@ class ProfileFragment : Fragment() {
 
     private fun init() {
         mcontext = requireContext()
-        auth = Firebase.auth
-        firestore = Firebase.firestore
-        storage = Firebase.storage
         registerLauncher()
         getBackgroundImage()
         getPosts()
@@ -86,20 +73,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun addPhoto() {
-
-        if (ContextCompat.checkSelfPermission(mcontext, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Snackbar.make(requireView(), requireActivity().getString(R.string.permission), Snackbar.LENGTH_INDEFINITE).setAction("Give Permission"
-                ) {
-                    permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                }.show()
-            } else {
-                permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
-        } else {
-            val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            activityResultLauncher.launch(intentToGallery)
-        }
+     androidUtil.askPermission(mcontext,requireActivity(),requireView(),permissionLauncher,activityResultLauncher)
     }
 
     private fun registerLauncher() {
@@ -109,18 +83,15 @@ class ProfileFragment : Fragment() {
                 if (intentFromResult != null) {
                     selectedPicture = intentFromResult.data
                     uploadPhoto()
-
                 }
             }
         }
-
         activityResultLauncherForBackground = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val intentFromResult = result.data
                 if (intentFromResult != null) {
                     backgroundPhoto = intentFromResult.data
                     uploadBackgroundPhoto()
-
                 }
             }
         }
@@ -131,7 +102,7 @@ class ProfileFragment : Fragment() {
                 activityResultLauncher.launch(intentToGallery)
             } else {
                 //permission denied
-                Toast.makeText(requireActivity(), "Permission needed!", Toast.LENGTH_LONG).show()
+               androidUtil.showToast(mcontext,this.getString(R.string.permissionNeedMessage))
             }
         }
     }
@@ -140,7 +111,7 @@ class ProfileFragment : Fragment() {
 
         val uuid = UUID.randomUUID()
         val imageName = "$uuid.jpg"
-        val imageReference = storage.reference.child("Posts").child(auth.currentUser!!.uid).child(imageName)
+        val imageReference = firebaseUtil.getPostsFromStorage().child(firebaseUtil.currentUserId()).child(imageName)
 
         if (selectedPicture!=null){
             imageReference.putFile(selectedPicture!!).addOnSuccessListener {
@@ -151,22 +122,22 @@ class ProfileFragment : Fragment() {
                     userPost["Post"] = postUri
                     userPost["Uid"] = uuidString
 
-                    firestore.collection(auth.currentUser!!.uid + "Posts").document(uuidString).set(userPost).addOnSuccessListener {
+                    firebaseUtil.getCurrentUserPosts().document(uuidString).set(userPost).addOnSuccessListener {
                         getPosts()
                     }.addOnFailureListener {
-                        Toast.makeText(mcontext, it.localizedMessage, Toast.LENGTH_LONG).show()
+                        androidUtil.showToast(mcontext,it.localizedMessage!!)
                     }
                 }.addOnFailureListener {
-                    Toast.makeText(mcontext,it.localizedMessage,Toast.LENGTH_LONG).show()
+                    androidUtil.showToast(mcontext,it.localizedMessage!!)
                 }
             }.addOnFailureListener{
-                Toast.makeText(mcontext, it.localizedMessage,Toast.LENGTH_LONG ).show()
+                androidUtil.showToast(mcontext,it.localizedMessage!!)
             }
         }
     }
     private fun getPosts() {
         val postList = ArrayList<Posts>()
-        firestore.collection(auth.currentUser!!.uid + "Posts").addSnapshotListener { value, error ->
+        firebaseUtil.getCurrentUserPosts().addSnapshotListener { value, error ->
             if (error != null){
                 Toast.makeText(mcontext,error.localizedMessage,Toast.LENGTH_LONG).show()
                 return@addSnapshotListener
@@ -195,11 +166,8 @@ class ProfileFragment : Fragment() {
 
 
     private fun getProfile(){
-        with(binding){
-            animationView.playAnimation()
-            scrollView.visibility = View.INVISIBLE
-        }
-        firestore.collection("Users").document(auth.currentUser!!.uid).get().addOnSuccessListener {
+        androidUtil.startAnimation(binding.animationView,binding.scrollView)
+       firebaseUtil.getAllUser().document(firebaseUtil.currentUserId()).get().addOnSuccessListener {
             if(it.exists()){
                 val profileUrl = it.getString("profileUrl")
                 val username = it.getString("username")
@@ -224,54 +192,37 @@ class ProfileFragment : Fragment() {
                 binding.textView10.text = username
                 Glide.with(this).asBitmap().load(profileUrl).into(binding.photoProfile)
             }else{
-                Toast.makeText(mcontext,"No users", Toast.LENGTH_LONG).show()
+                androidUtil.showToast(mcontext,this.getString(R.string.noUserMessage))
 
             }
-            with(binding){
-                animationView.pauseAnimation()
-                animationView.cancelAnimation()
-                animationView.visibility = View.INVISIBLE
-                scrollView.visibility = View.VISIBLE
-            }
+           androidUtil.stopAnimation(binding.animationView,binding.scrollView)
         }.addOnFailureListener {
-            Toast.makeText(mcontext,it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(mcontext,it.localizedMessage!!)
         }
 
-        firestore.collection(auth.currentUser!!.uid + "Following").get().addOnSuccessListener {
+        firebaseUtil.getCurrentUserFollowing().get().addOnSuccessListener {
             val followingCount = it.size()
             binding.followingCountText.text = followingCount.toString()
         }.addOnFailureListener {
-            Toast.makeText(mcontext,it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(mcontext,it.localizedMessage!!)
         }
 
-        firestore.collection(auth.currentUser!!.uid + "Followers").get().addOnSuccessListener {
+        firebaseUtil.getCurrentUserFollowers().get().addOnSuccessListener {
             val followersCount = it.size()
             binding.followersCountText.text = followersCount.toString()
         }.addOnFailureListener {
-            Toast.makeText(mcontext,it.localizedMessage,Toast.LENGTH_LONG).show()
+            androidUtil.showToast(mcontext,it.localizedMessage!!)
         }
     }
-    private fun setBackgroundImage(){
-        if (ContextCompat.checkSelfPermission(mcontext, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Snackbar.make(requireView(), requireActivity().getString(R.string.permission), Snackbar.LENGTH_INDEFINITE).setAction("Give Permission"
-                ) {
-                    permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                }.show()
-            } else {
-                permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
-        } else {
-            val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            activityResultLauncherForBackground.launch(intentToGallery)
 
-        }
+    private fun setBackgroundImage(){
+        androidUtil.askPermission(mcontext,requireActivity(),requireView(),permissionLauncher,activityResultLauncherForBackground)
     }
 
     private fun uploadBackgroundPhoto(){
 
-        val imageName = "${auth.currentUser!!.uid}.jpg"
-        val imageReference = storage.reference.child("BackgroundPhotos").child(auth.currentUser!!.uid).child(imageName)
+        val imageName = "${firebaseUtil.currentUserId()}.jpg"
+        val imageReference = firebaseUtil.getBackgroundPhotosFromStorage().child(firebaseUtil.currentUserId()).child(imageName)
         if (backgroundPhoto!=null){
             imageReference.putFile(backgroundPhoto!!).addOnSuccessListener {
                 imageReference.downloadUrl.addOnSuccessListener { uri ->
@@ -279,29 +230,29 @@ class ProfileFragment : Fragment() {
                     val userBackground = hashMapOf<String,Any>()
                     userBackground["Background"] = userBackgroundImage
 
-                    firestore.collection(auth.currentUser!!.uid + "Background").document(auth.currentUser!!.uid).set(userBackground).addOnSuccessListener {
+                   firebaseUtil.getCurrentUserBackground().document(firebaseUtil.currentUserId()).set(userBackground).addOnSuccessListener {
                         getBackgroundImage()
 
                     }.addOnFailureListener {
-                        Toast.makeText(mcontext, it.localizedMessage, Toast.LENGTH_LONG).show()
+                        androidUtil.showToast(mcontext,it.localizedMessage!!)
                     }
                 }.addOnFailureListener {
-                    Toast.makeText(mcontext,it.localizedMessage,Toast.LENGTH_LONG).show()
+                    androidUtil.showToast(mcontext,it.localizedMessage!!)
                 }
             }.addOnFailureListener{
-                Toast.makeText(mcontext, it.localizedMessage,Toast.LENGTH_LONG ).show()
+                androidUtil.showToast(mcontext,it.localizedMessage!!)
             }
         }
     }
 
     private fun getBackgroundImage() {
-        firestore.collection(auth.currentUser!!.uid + "Background").document(auth.currentUser!!.uid).get().addOnSuccessListener {
+      firebaseUtil.getCurrentUserBackground().document(firebaseUtil.currentUserId()).get().addOnSuccessListener {
             if(it.exists()){
                 val backgroundImageUrl = it.getString("Background")
                 Glide.with(this).asBitmap().load(backgroundImageUrl).into(binding.imageView)
             }
-        }.addOnFailureListener { error ->
-            Toast.makeText(mcontext,error.localizedMessage,Toast.LENGTH_LONG).show()
+        }.addOnFailureListener {
+            androidUtil.showToast(mcontext,it.localizedMessage!!)
         }
     }
 }

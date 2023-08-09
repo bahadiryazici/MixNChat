@@ -39,7 +39,8 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/options_menu_icon"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageView"
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 <ImageView
                     android:id="@+id/imageView"
@@ -48,7 +49,8 @@
                     android:scaleType="centerCrop"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/photoProfile"
@@ -74,17 +76,19 @@
                     android:text="Melissa Peters"
                     android:textColor="#000000"
                     android:textSize="18sp"
-                    android:textStyle="normal" />
+                    android:textStyle="normal"
+                    tools:ignore="HardcodedText" />
 
                 <ImageView
                     android:id="@+id/imageView7"
-                    app:layout_constraintEnd_toStartOf="@+id/textView11"
-                    app:layout_constraintStart_toStartOf="@+id/photoProfile"
-                    app:layout_constraintTop_toBottomOf="@+id/textView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
-                    android:src="@drawable/location_icon" />
+                    android:src="@drawable/location_icon"
+                    app:layout_constraintEnd_toStartOf="@+id/textView11"
+                    app:layout_constraintStart_toStartOf="@+id/photoProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/textView10"
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
                 <TextView
                     android:id="@+id/textView11"
@@ -96,12 +100,11 @@
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/inter"
                     android:text="Nigeria"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    tools:ignore="HardcodedText" />
 
                 <TextView
                     android:id="@+id/followersCountText"
-                    app:layout_constraintEnd_toStartOf="@+id/followingCountText"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
@@ -110,7 +113,10 @@
                     android:text="122"
                     android:textColor="#FF8A00"
                     android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/followingCountText"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView7"
+                    tools:ignore="HardcodedText,TextContrastCheck" />
 
                 <TextView
                     android:id="@+id/textView20"
@@ -120,22 +126,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter"
-                    android:text="Followers"
+                    android:text="@string/followers"
                     android:textColor="#544C4C"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/followingCountText"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/followersCountText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter"
                     android:text="67"
                     android:textColor="#FF8A00"
                     android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/followersCountText"
+                    tools:ignore="HardcodedText,TextContrastCheck" />
 
                 <TextView
                     android:id="@+id/textView22"
@@ -144,14 +151,12 @@
                     app:layout_constraintTop_toBottomOf="@+id/followingCountText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Following"
+                    android:text="@string/following"
                     android:textColor="#544C4C"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/speechCountText"
-                    app:layout_constraintStart_toEndOf="@+id/followingCountText"
-                    app:layout_constraintTop_toTopOf="@+id/followingCountText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="62dp"
@@ -159,7 +164,10 @@
                     android:text="37"
                     android:textColor="#FF8A00"
                     android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/followingCountText"
+                    app:layout_constraintTop_toTopOf="@+id/followingCountText"
+                    tools:ignore="HardcodedText,TextContrastCheck" />
 
                 <TextView
                     android:id="@+id/textView24"
@@ -168,7 +176,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/speechCountText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Speech"
+                    android:text="@string/speech"
                     android:textColor="#544C4C"
                     android:textSize="14sp" />
 
@@ -189,20 +197,22 @@
                     android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore etdolore magna aliqua."
                     android:textColor="#544C4C"
                     android:textSize="13sp"
-                    android:textStyle="normal" />
+                    android:textStyle="normal"
+                    tools:ignore="HardcodedText,UnusedAttribute,VisualLintLongText" />
 
                 <TextView
                     android:id="@+id/textView26"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
-                    android:text="Photos"
+                    android:text="@string/photos"
                     android:textColor="#FF8A00"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView25"
+                    tools:ignore="TextContrastCheck" />
 
                 <View
                     android:id="@+id/view3"
@@ -226,14 +236,15 @@
                     android:layout_marginTop="14dp" />
 
                 <ImageView
-                    android:id="@+id/imageView6"
+                    android:id="@+id/chat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="12dp"
                     android:src="@drawable/start_chat_icon"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageView"
+                    tools:ignore="ContentDescription,ImageContrastCheck" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
@@ -247,5 +258,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_rawRes="@raw/animation_lkwpajwx" />
+        app:lottie_rawRes="@raw/animation_lkwpajwx"
+        tools:ignore="ImageContrastCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>
