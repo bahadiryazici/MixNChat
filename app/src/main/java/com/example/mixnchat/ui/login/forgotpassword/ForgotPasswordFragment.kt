@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentForgotPasswordBinding
 import com.example.mixnchat.utils.AndroidUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -21,12 +21,15 @@ class ForgotPasswordFragment : Fragment() {
     private lateinit var auth : FirebaseAuth
     private val action = ForgotPasswordFragmentDirections.actionForgotPasswordFragmentToLoginFragment()
     private val androidUtil = AndroidUtil()
+    private lateinit var viewModel: ForgotPasswordViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentForgotPasswordBinding.inflate(layoutInflater,container,false)
         auth = Firebase.auth
+        viewModel = ViewModelProvider(this)[ForgotPasswordViewModel::class.java]
+        viewModel.init()
         return binding.root
     }
 
@@ -43,11 +46,10 @@ class ForgotPasswordFragment : Fragment() {
 
     private fun resetPassword() {
         val email = binding.mailEdittext.text.toString()
-        auth.sendPasswordResetEmail(email).addOnSuccessListener {
-            androidUtil.showToast(requireContext(),this.getString(R.string.resetPasswordMessage))
-            findNavController().navigate(action)
-        }.addOnFailureListener {
-           androidUtil.showToast(requireContext(),it.localizedMessage!!)
-        }
+     viewModel.resetPassword(email, onSuccess = {
+         findNavController().navigate(action)
+     }, onError = {
+         androidUtil.showToast(requireContext(),it)
+     })
     }
 }

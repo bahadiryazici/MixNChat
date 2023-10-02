@@ -34,26 +34,19 @@ class OnboardingActivity : AppCompatActivity() {
         binding.viewPager.adapter = sliderAdapter
         supportActionBar?.hide()
         binding.dots.attachTo(binding.viewPager)
-
-
         binding.button.setOnClickListener {
             goToNextSlide(sliderAdapter)
         }
         binding.viewPager.isUserInputEnabled = false
-
         binding.backButton.setOnClickListener {
             goBackSlide(sliderAdapter)
         }
-
         binding.backButton.visibility = View.INVISIBLE
     }
-
     private fun goToNextSlide(slideradapter : SliderAdapter) {
         val preferences = PreferencesProvider(this)
         val  currentItem = binding.viewPager.currentItem
-
         if (currentItem < slideradapter.itemCount - 1 ) {
-
             binding.viewPager.currentItem = currentItem + 1
             binding.backButton.visibility = View.VISIBLE
             if(currentItem == slideradapter.itemCount - 2){
@@ -67,7 +60,6 @@ class OnboardingActivity : AppCompatActivity() {
             finish()
         }
     }
-
     private fun goBackSlide(slideradapter: SliderAdapter){
         val  currentItem = binding.viewPager.currentItem
         binding.viewPager.currentItem = currentItem - 1

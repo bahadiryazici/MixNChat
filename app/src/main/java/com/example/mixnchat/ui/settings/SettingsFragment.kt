@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.Settings
+package com.example.mixnchat.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +13,7 @@ import com.example.mixnchat.ui.mainpage.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class SettingsFragment : Fragment() {
@@ -22,7 +23,6 @@ class SettingsFragment : Fragment() {
     private lateinit var auth : FirebaseAuth
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
-
         _binding = FragmentSettingsBinding.inflate(layoutInflater, container, false)
         init()
         return binding.root
@@ -66,9 +66,13 @@ class SettingsFragment : Fragment() {
         requireActivity().finish()
     }
     private fun logOut(){
-        auth.signOut()
-        val intent = Intent(requireActivity(), LoginActivity::class.java)
-        startActivity(intent)
-        requireActivity().finish()
+        FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {task ->
+            if (task.isSuccessful){
+                auth.signOut()
+                val intent = Intent(requireActivity(), LoginActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+            }
+        }
     }
 }

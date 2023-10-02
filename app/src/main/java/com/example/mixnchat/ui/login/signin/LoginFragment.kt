@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.mixnchat.R
 import com.example.mixnchat.ui.mainpage.MainActivity
@@ -29,6 +30,7 @@ class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore : FirebaseFirestore
     private lateinit var storage: FirebaseStorage
+    private lateinit var viewModel: LoginViewModel
     private val androidUtil = AndroidUtil()
 
     override fun onCreateView(
@@ -39,6 +41,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun init() {
+        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+        viewModel.init()
         firestore = Firebase.firestore
         auth = Firebase.auth
         storage = Firebase.storage
@@ -68,21 +72,15 @@ class LoginFragment : Fragment() {
     private fun login() {
         val email = binding.mailEdit.text.toString()
         val password = binding.passwordEdit.text.toString()
-        if(email == "" || password == ""){
-            binding.mailEdit.error = this.getString(R.string.fillFieldMessage)
-            binding.passwordEdit.error =  this.getString(R.string.fillFieldMessage)
-        }else{
-            auth.signInWithEmailAndPassword(email,password).addOnSuccessListener {
-                    if (auth.currentUser!!.isEmailVerified){
-                        val intent = Intent(requireActivity(), MainActivity::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
-                    }else{
-                        androidUtil.showToast(requireContext(),this.getString(R.string.verifyMailMessage))
-                    }
-            }.addOnFailureListener {
-                    androidUtil.showToast(requireContext(),it.localizedMessage!!)
-            }
-        }
+
+        viewModel.errorMessageMail = getString(R.string.verifyMailMessage)
+        viewModel.errorMessage = getString(R.string.please_enter_your_e_mail_address_and_enter_password)
+        viewModel.signIn(email,password, onError = {
+            androidUtil.showToast(requireContext(),it)
+        }, onSuccess = {
+            val intent = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        })
     }
 }

@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@drawable/sender_bg"
         android:padding="8dp"
         android:layout_marginEnd="80dp"
@@ -18,10 +19,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="TextView"
+            android:layout_marginBottom="8dp"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:fontFamily="@font/inter"
-            android:id="@+id/leftChatTextView"/>
+            android:id="@+id/leftChatTextView"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="11:00"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="bottom|end"
+            android:fontFamily="@font/inter"
+            android:layout_height="wrap_content"
+            android:id="@+id/leftChatHour"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
     <LinearLayout
@@ -30,6 +45,7 @@
         android:background="@drawable/receiver_bg"
         android:layout_alignParentEnd="true"
         android:padding="8dp"
+        android:orientation="vertical"
         android:layout_marginEnd="8dp"
         android:id="@+id/rightChatLayout"
         tools:ignore="RelativeOverlap">
@@ -38,9 +54,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
+            android:text="TextView"
+            android:layout_marginBottom="8dp"
             android:textSize="18sp"
             android:fontFamily="@font/inter"
-            android:id="@+id/rightChatTextView"/>
+            android:id="@+id/rightChatTextView"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="11:00"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter"
+            android:layout_gravity="bottom|end"
+            android:id="@+id/rightChatHour"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textSeen"
+            android:text="seen"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:layout_gravity="bottom|end"/>
+
     </LinearLayout>
 
 </RelativeLayout>

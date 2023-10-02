@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.Settings.editprofile
+package com.example.mixnchat.ui.login.editprofile
 
 import android.app.Activity
 import android.content.Intent
@@ -16,10 +16,11 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.example.mixnchat.R
 import com.example.mixnchat.databinding.FragmentEditProfileBinding
 import com.example.mixnchat.utils.AndroidUtil
-import com.example.mixnchat.utils.FirebaseUtil
 import java.io.IOException
 
 
@@ -31,8 +32,10 @@ class EditProfileFragment : Fragment() {
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private var selectedPicture : Uri? = null
     private var selectedBitmap : Bitmap? = null
-    private val firebaseUtil = FirebaseUtil()
     private val androidUtil = AndroidUtil()
+    private var ppUrl : String ?= null
+    private lateinit var viewModel: EditProfileViewModel
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -42,6 +45,7 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun init() {
+        viewModel = ViewModelProvider(this)[EditProfileViewModel::class.java]
         getProfile()
         registerLauncher()
     }
@@ -58,6 +62,9 @@ class EditProfileFragment : Fragment() {
         binding.editProfilePhotoImageView.setOnClickListener {
             setPhoto()
         }
+        binding.birthEditText.setOnClickListener {
+            androidUtil.initDatePicker(requireContext(),binding.birthEditText)
+        }
     }
 
     private fun setPhoto() {
@@ -66,27 +73,22 @@ class EditProfileFragment : Fragment() {
 
     private fun getProfile(){
         androidUtil.startAnimation(binding.animationView,binding.scrollView)
-        firebaseUtil.getAllUser().document(firebaseUtil.currentUserId()).get().addOnSuccessListener {
-            if (it.exists()){
-             val ppUrl = it.getString("profileUrl")
-             val biography = it.getString("biography")
-             val country = it.getString("country")
-             val gender = it.getString("gender")
-             val username = it.getString("username")
-             with(binding){
-                 Glide.with(requireContext()).load(ppUrl).into(editProfilePhotoImageView)
-                 bioEditText.setText(biography.toString())
-                 countrySpinner.setSelection(getIndex(countrySpinner,country.toString()))
-                 genderSpinner.setSelection(getIndex(genderSpinner,gender.toString()))
-                 nameEditText.setText(username.toString())
-             }
+        viewModel.getProfile( {
+            with(binding){
+                Glide.with(requireContext()).load(it[0]).into(editProfilePhotoImageView)
+                bioEditText.setText(it[1])
+                countrySpinner.setSelection(getIndex(countrySpinner,it[2]))
+                genderSpinner.setSelection(getIndex(genderSpinner,it[3]))
+                nameEditText.setText(it[4])
+                birthEditText.text = it[5]
             }
-           androidUtil.stopAnimation(binding.animationView,binding.scrollView)
-        }.addOnFailureListener {
-            Toast.makeText(requireContext(),it.localizedMessage, Toast.LENGTH_LONG).show()
-        }
+        }, onError = {
+            androidUtil.showToast(requireContext(), it)
+        }, callBack = {
+            ppUrl = it
+        })
+        androidUtil.stopAnimation(binding.animationView,binding.scrollView)
     }
-
     private fun getIndex(spinner: Spinner, s: String): Int {
         for(i in 0 until spinner.count){
             if (spinner.getItemAtPosition(i).toString() == s){
@@ -95,67 +97,53 @@ class EditProfileFragment : Fragment() {
         }
         return 0
     }
-
     private fun uploadUser() {
-        val imageName = "${firebaseUtil.currentUserId()}.jpg"
-        val imageReference = firebaseUtil.getProfilePhotoFromStorage().child(imageName)
+        if (selectedPicture != null) {
+            // if new photo chosen
+            viewModel.uploadUser(
+                onSuccess = {
+                viewModel.uploadNewProfilePhoto(
+                    selectedPicture!!,
+                    onSuccess = { updateUserWithUri(it)},
+                    onError = { androidUtil.showToast(requireContext(), it) }
+                )
+                },{
+                androidUtil.showToast(requireContext(),it)
+            })
+        } else {
+            // if its old photo, just update others
+            val ppUri = Uri.parse(ppUrl!!)
+            updateUserWithUri(ppUri.toString())
+        }
+    }
+
+    private fun updateUserWithUri(ppUri: String) {
         val username = binding.nameEditText.text.toString()
         val country = binding.countrySpinner.selectedItem.toString()
         val gender = binding.genderSpinner.selectedItem.toString()
         val biography = binding.bioEditText.text.toString()
-        imageReference.delete().addOnSuccessListener {
-                val newImageReference = firebaseUtil.getProfilePhotoFromStorage().child(imageName)
-                if (selectedPicture != null) {
-                    newImageReference.putFile(selectedPicture!!).addOnSuccessListener {
-                        imageReference.downloadUrl.addOnSuccessListener { uri->
-                            val ppUri = uri.toString()
-                            val user = hashMapOf<String,Any>()
-                            user["userUid"] = firebaseUtil.currentUserId()
-                            user["profileUrl"] = ppUri
-                            user["username"] = username
-                            user["country"] = country
-                            user["gender"] = gender
-                            user["biography"] = biography
-                            user["speech"] = ""
-                            firebaseUtil.getAllUser().document(firebaseUtil.currentUserId()).set(user).addOnSuccessListener {
-                                androidUtil.showToast(requireContext(),"Profile update has been done")
-                                parentFragmentManager.popBackStack()
-                            }.addOnFailureListener {
-                                androidUtil.showToast(requireContext(),it.localizedMessage!!)
-                            }
-
-                        }.addOnFailureListener {
-                            androidUtil.showToast(requireContext(),it.localizedMessage!!)
-                        }
-                    }.addOnFailureListener {
-                        androidUtil.showToast(requireContext(),it.localizedMessage!!)
-                    }
-                }
-        }.addOnFailureListener {
-            androidUtil.showToast(requireContext(),it.localizedMessage!!)
-        }
-
+        val date = binding.birthEditText.text.toString()
+        viewModel.updateUserWithUri(ppUri,username, country, gender, biography, date, onSuccess = {
+            androidUtil.showToast(requireContext(), this.getString(R.string.profilUpdateMessage))
+            parentFragmentManager.popBackStack()
+        }, onError = {
+            androidUtil.showToast(requireContext(),it)
+        })
     }
-
     private fun registerLauncher() {
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val intentFromResult = result.data
                 if (intentFromResult != null) {
                     selectedPicture = intentFromResult.data
+
                     try {
                         if (Build.VERSION.SDK_INT >= 28) {
-                            val source = ImageDecoder.createSource(
-                                requireActivity().contentResolver,
-                                selectedPicture!!
-                            )
+                            val source = ImageDecoder.createSource(requireActivity().contentResolver, selectedPicture!!)
                             selectedBitmap = ImageDecoder.decodeBitmap(source)
                             binding.editProfilePhotoImageView.setImageBitmap(selectedBitmap)
                         } else {
-                            selectedBitmap = MediaStore.Images.Media.getBitmap(
-                                requireActivity().contentResolver,
-                                selectedPicture
-                            )
+                            selectedBitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, selectedPicture)
                             binding.editProfilePhotoImageView.setImageBitmap(selectedBitmap)
                         }
                     } catch (e: IOException) {

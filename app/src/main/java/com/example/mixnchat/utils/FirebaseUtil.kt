@@ -22,8 +22,15 @@ class FirebaseUtil {
         return auth.currentUser!!.uid
     }
 
+    fun getUser() : DocumentReference {
+        return firestore.collection("Users").document(currentUserId())
+    }
     fun allChatRoomCollectionReference() : CollectionReference {
         return  firestore.collection("chatrooms")
+    }
+
+    fun getUsernameOtherSpokenUsers() : CollectionReference{
+        return firestore.collection(auth.currentUser!!.uid + "Spoken")
     }
 
     fun getOtherUserFromChatRoom(userIds : List<String>) : DocumentReference {
@@ -101,6 +108,14 @@ class FirebaseUtil {
     }
     fun getOtherUserBackground(userUid: String) : CollectionReference{
         return firestore.collection(userUid + "Background")
+    }
+
+    fun isLoggedIn() : Boolean{
+        if(auth.currentUser != null){
+            return true
+        }else{
+            return false
+        }
     }
 
 }

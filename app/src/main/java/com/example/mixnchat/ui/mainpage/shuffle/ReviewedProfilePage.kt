@@ -1,5 +1,6 @@
 package com.example.mixnchat.ui.mainpage.shuffle
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,13 +8,13 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.mixnchat.R
 import com.example.mixnchat.data.Posts
 import com.example.mixnchat.databinding.FragmentReviewedProfilPageBinding
+import com.example.mixnchat.ui.mainpage.chats.ChatActivity
 import com.example.mixnchat.ui.mainpage.profile.ProfilePostAdapter
 import com.example.mixnchat.ui.mainpage.profile.OnPostItemClickListener
 import com.example.mixnchat.utils.AndroidUtil
@@ -30,17 +31,19 @@ class ReviewedProfilePage : Fragment(){
     private var profileUrl : String ?= null
     private val androidUtil = AndroidUtil()
     private val firebaseUtil = FirebaseUtil()
+    private lateinit var viewModel: ReviewedProfileViewModel
+    private val postList = ArrayList<Posts>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-
        _binding = FragmentReviewedProfilPageBinding.inflate(layoutInflater,container,false)
         init()
         return binding.root
     }
 
     private fun init() {
+        viewModel = ViewModelProvider(this)[ReviewedProfileViewModel::class.java]
         getArgs()
         setReviewedProfile()
         setBackgroundImage()
@@ -55,28 +58,16 @@ class ReviewedProfilePage : Fragment(){
         }
     }
     private fun setPost() {
-        val postList = ArrayList<Posts>()
-        firebaseUtil.getOtherUserPosts(userUid!!).addSnapshotListener { value, error ->
-            if (error != null) {
-                Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_LONG).show()
-                return@addSnapshotListener
-            }
-            if (value != null && !value.isEmpty) {
-                val documents = value.documents
+      viewModel.setPosts(onError = {},
+          {posts ->
+          postList.clear()
+          postList.addAll(posts)
+          binding.recyclerView.layoutManager = GridLayoutManager(requireContext(),3,GridLayoutManager.VERTICAL,false)
+          profilePostAdapter = ProfilePostAdapter(postList, object : OnPostItemClickListener { override fun onPostItemClick(postId: String) {} })
+          binding.recyclerView.adapter = profilePostAdapter
+          profilePostAdapter.notifyDataSetChanged()
+      }, userUid!!)
 
-                for (document in documents) {
-                    val postValue = document.getString("Post")
-                    val postId = document.getString("Uid")
-                    val post = Posts(postValue,postId)
-                    postList.add(post)
-                }
-                binding.recyclerView.layoutManager = GridLayoutManager(requireContext(),3,GridLayoutManager.VERTICAL,false)
-                profilePostAdapter = ProfilePostAdapter(postList, object :
-                    OnPostItemClickListener { override fun onPostItemClick(postId: String) {} })
-                binding.recyclerView.adapter = profilePostAdapter
-                profilePostAdapter.notifyDataSetChanged()
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,22 +77,24 @@ class ReviewedProfilePage : Fragment(){
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
             swipeRefresh()
-
         }
         binding.chat.setOnClickListener {
-            findNavController().navigate(ReviewedProfilePageDirections.actionReviewedProfilPageToChatFragment(username!!,profileUrl!!,userUid!!))
+            val intent = Intent(requireContext(),ChatActivity::class.java)
+            intent.putExtra("username",username)
+            intent.putExtra("profileUrl",profileUrl)
+            intent.putExtra("userId",userUid)
+            startActivity(intent)
         }
+
     }
 
     private fun swipeRefresh() {
-        androidUtil.startAnimation(binding.animationView,binding.scrollView)
         setReviewedProfile()
         setBackgroundImage()
         setPost()
         reViewMyPage()
         blockedUser()
         binding.swipeRefreshLayout.isRefreshing = false
-        androidUtil.stopAnimation(binding.animationView,binding.scrollView)
     }
 
     private fun showPopup(v: View) {
@@ -166,51 +159,35 @@ class ReviewedProfilePage : Fragment(){
 
     private fun setReviewedProfile(){
         androidUtil.startAnimation(binding.animationView,binding.scrollView)
-        userUid?.let { it ->
-            firebaseUtil.getAllUser().document(it).get().addOnSuccessListener {
-                if(it.exists()){
-                    profileUrl = it.getString("profileUrl")
-                    username = it.getString("username")
-                    val country = it.getString("country")
-                    val biography = it.getString("biography")
-                    val speech = it.getString("speech")
-                    if (speech.equals("")){
-                        binding.speechCountText.text = "0"
-                    }else{
-                        binding.speechCountText.text = speech
-                    }
-                    if (country.equals("")){
-                        binding.textView11.text = "Unknown"
-                    }else{
-                        binding.textView11.text = country
-                    }
-                    if (biography.equals("")){
-                        binding.textView25.text = "Unknown"
-                    }else{
-                        binding.textView25.text = biography
-                    }
-                    binding.textView10.text = username
-                    Glide.with(this).asBitmap().load(profileUrl).into(binding.photoProfile)
-                }else{
-                    androidUtil.showToast(requireContext(),"No users")
-                }
-              androidUtil.stopAnimation(binding.animationView,binding.scrollView)
-            }.addOnFailureListener { error ->
-                androidUtil.showToast(requireContext(),error.localizedMessage!!)
-            }
+        if(userUid != null){
+            viewModel.setReviewedProfile(userUid!!,{
+                profileUrl = it[0]
+                Glide.with(this).asBitmap().load(profileUrl).into(binding.photoProfile)
+                username = it[1]
+                if(it[4] == "")
+                    binding.speechCountText.text ="0"
+                else
+                    binding.speechCountText.text = it[4]
+                if (it[2] == "")
+                    binding.textView10.text = "Unknown"
+                else
+                    binding.textView10.text = it[2]
+                if (it[3] == "")
+                    binding.textView25.text = "Unknown"
+                else
+                    binding.textView25.text = it[3]
+            }, onError = {androidUtil.showToast(requireContext(),it)})
         }
-        firebaseUtil.getOtherUserFollowers(userUid!!).get().addOnSuccessListener {
-            val followers = it.size()
-            binding.followersCountText.text = followers.toString()
-        }.addOnFailureListener {
-            androidUtil.showToast(requireContext(),it.localizedMessage!!)
-        }
-        firebaseUtil.getOtherUserFollowing(userUid!!).get().addOnSuccessListener {
-            val following = it.size()
-            binding.followingCountText.text = following.toString()
-        }.addOnFailureListener {
-            androidUtil.showToast(requireContext(),it.localizedMessage!!)
-        }
+        viewModel.getOtherUserFollowers(userUid!!, onError = {androidUtil.showToast(requireContext(),it) },
+            {size ->
+            binding.followersCountText.text = size.toString()
+        })
+
+        viewModel.getOtherUsersFollowing(userUid!!, onError = {androidUtil.showToast(requireContext(),it)},
+            {size ->
+                binding.followingCountText.text = size.toString()
+            })
+        androidUtil.stopAnimation(binding.animationView,binding.scrollView)
     }
 
     private fun reViewMyPage(){
@@ -221,35 +198,25 @@ class ReviewedProfilePage : Fragment(){
     }
 
     private fun blockedUser(){
-        firebaseUtil.getOtherUserBlocks(userUid!!).document(firebaseUtil.currentUserId()).get().addOnSuccessListener {
-            if(it.exists()){
-                if (it.id == firebaseUtil.currentUserId()){
-                    with(binding){
+        viewModel.getOtherUserBlock(userUid!!, onError = {androidUtil.showToast(requireContext(), it)}, onSuccess = {
+            if(it == firebaseUtil.currentUserId()){
+                with(binding){
 
-                        chat.visibility = View.INVISIBLE
-                        photoProfile.setImageResource(R.drawable.blocked_icon)
-                        imageView.setImageResource(R.drawable.blocked_icon)
-                        recyclerView.adapter = ProfilePostAdapter(arrayListOf(),object :
-                            OnPostItemClickListener { override fun onPostItemClick(postId: String) {} })
-                        androidUtil.showToast(requireContext(), "You have been blocked!")
-                    }
+                    chat.visibility = View.INVISIBLE
+                    photoProfile.setImageResource(R.drawable.blocked_icon)
+                    imageView.setImageResource(R.drawable.blocked_icon)
+                    recyclerView.adapter = ProfilePostAdapter(arrayListOf(),object :
+                        OnPostItemClickListener { override fun onPostItemClick(postId: String) {} })
+                    androidUtil.showToast(requireContext(),requireActivity().getString(R.string.blockMessage))
                 }
             }
+        })
 
-        }.addOnFailureListener {
-            androidUtil.showToast(requireContext(),it.localizedMessage!!)
-        }
     }
 
     private fun setBackgroundImage(){
-        firebaseUtil.getOtherUserBackground(userUid!!).document(userUid!!).get().addOnSuccessListener {
-            if(it.exists()){
-                val profileBackgroundImageUrl = it.getString("Background")
-                Glide.with(this).asBitmap().load(profileBackgroundImageUrl).into(binding.imageView)
-            }
-        }.addOnFailureListener {
-            androidUtil.showToast(requireContext(),it.localizedMessage!!)
-        }
+        viewModel.getOtherUserBackground(userUid!!, onSuccess = {
+            Glide.with(this).asBitmap().load(it).into(binding.imageView)
+        }, onError = {androidUtil.showToast(requireContext(), it) })
     }
-
 }

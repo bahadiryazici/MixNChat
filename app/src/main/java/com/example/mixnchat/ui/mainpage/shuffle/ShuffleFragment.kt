@@ -7,13 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mixnchat.data.Users
 import com.example.mixnchat.databinding.FragmentShuffleBinding
 import com.example.mixnchat.utils.AndroidUtil
-import com.example.mixnchat.utils.FirebaseUtil
-import java.util.Random
 
 
 class ShuffleFragment : Fragment() {
@@ -22,11 +20,11 @@ class ShuffleFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var shuffleAdapter: ShuffleAdapter
     private lateinit var mcontext: Context
-    private val userArrayList = ArrayList<Users>()
     var filteredList = ArrayList<Users>()
+    private val userArrayList = ArrayList<Users>()
     val resultList = ArrayList<Users>()
     private val androidUtil = AndroidUtil()
-    private val firebaseUtil = FirebaseUtil()
+    private lateinit var viewModel: ShuffleViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,6 +37,7 @@ class ShuffleFragment : Fragment() {
     }
 
     private fun init() {
+        viewModel = ViewModelProvider(this)[ShuffleViewModel::class.java]
         mcontext = requireContext()
         getUser()
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -55,53 +54,21 @@ class ShuffleFragment : Fragment() {
         binding.swipeRefreshLayout.isRefreshing = false
     }
     private fun getUser() {
-        firebaseUtil.getAllUser().addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                Toast.makeText(mcontext, error.localizedMessage, Toast.LENGTH_LONG).show()
-                return@addSnapshotListener
-            }
-
-            if (snapshot != null && !snapshot.isEmpty) {
-                val documents = snapshot.documents
-                val allUsers = ArrayList<Users>()
-                for (document in documents) {
-                    val userName = document.getString("username")
-                    val biography = document.getString("biography")
-                    val profileUrl = document.getString("profileUrl")
-                    val userUid = document.getString("userUid")
-                    if (userName != null && biography != null && profileUrl != null) {
-                        val user = Users(userName, biography, profileUrl, userUid)
-                        allUsers.add(user)
-                    }
-                }
-
-                val random = Random()
-                while (userArrayList.size < 5 && userArrayList.size < allUsers.size) {
-                    val randomIndex = random.nextInt(allUsers.size)
-                    val randomUser = allUsers[randomIndex]
-                    if (!userArrayList.contains(randomUser)) {
-                        userArrayList.add(randomUser)
-                    }
-                }
-                updateRecyclerView(userArrayList)
-            }
+        viewModel.getUserByRandom(onError = {
+            androidUtil.showToast(requireContext(),it)
+        }) {users ->
+            userArrayList.clear()
+            userArrayList.addAll(users)
+            updateRecyclerView(userArrayList)
         }
     }
     private fun searchInFirebase(){
-        firebaseUtil.getAllUser().get().addOnSuccessListener {
-            resultList.clear()
-            for (document in it.documents) {
-                val userName = document.getString("username")
-                val biography = document.getString("biography")
-                val profileUrl = document.getString("profileUrl")
-                val userUid = document.getString("userUid")
-                if (userName != null && biography != null && profileUrl != null) {
-                    val user = Users(userName, biography, profileUrl, userUid)
-                    resultList.add(user)
-                }
-            }
-        }.addOnFailureListener {
-            androidUtil.showToast(requireContext(),it.localizedMessage!!)
+
+        viewModel.getUser(onError = {
+            androidUtil.showToast(requireContext(),it)
+        }){users ->
+        resultList.clear()
+        resultList.addAll(users)
         }
     }
     private fun searchViewListener(){

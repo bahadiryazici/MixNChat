@@ -20,14 +20,16 @@
     <string name="webID">34440345033-k1377t82pkadkd0g4i4o76jrgt18lqbm.apps.googleusercontent.com</string>
     <string name="username">Username</string>
     <string name="biography">Biography</string>
-
     <string name="resetPasswordMessage">Reset password link has been sent to your registered Email</string>
     <string name="fillFieldMessage">Fill this field!</string>
     <string name="verifyMailMessage">Please verify your mail address</string>
-    <string name="selectPictureMessage">Select a picture</string>
+    <string name="selectPictureMessage">Please select a picture</string>
     <string name="permissionNeedMessage">Permission needed!</string>
     <string name="postDeletedMessage">Post Deleted</string>
+    <string name="allFieldsMessage">Please fill all the fields!</string>
     <string name="noUserMessage">No users</string>
+    <string name="profilUpdateMessage">Profile update has been done</string>
+    <string name="blockMessage">You have been blocked!</string>
     <string name="you">You : </string>
     <string name="write_message_here">Write message here</string>
     <string name="chats">Chats</string>
@@ -52,7 +54,7 @@
     <string name="enter_your_password">Enter your password</string>
     <string name="enter_your_e_mail">Enter your e-mail</string>
     <string name="login">Login</string>
-    <string name="please_enter_your_e_mail_address_and_enter_password">Please enter your e-mail address and enter password</string>
+    <string name="please_enter_your_e_mail_address_and_enter_password">Please enter your e-mail address and password</string>
     <string name="sign_up">Sign Up</string>
     <string name="don_t_have_an_account">Don’t have an account?</string>
     <string name="forget_password">Forget password?</string>
@@ -74,6 +76,9 @@
     <string name="the_first_step_is_to_create_a_great_profile_that_introduces_yourself_add_your_own_photos_share_your_hobbies_and_interests_so_other_users_can_get_to_know_you_better_and_find_common_points">The first step is to create a great profile that introduces yourself! Add your own photos, share your hobbies and interests. So other users can get to know you better and find common points.</string>
     <string name="create_your_profile">Create Your Profile</string>
     <string name="search_username">Search Username</string>
+    <string name="field_cant_be_empty">Field cannot be empty!</string>
+    <string name="email_successfully_updated">E-mail successfully updated!</string>
+    <string name="password_successfully_updated">Password successfully updated!</string>
 
     <string-array name="gender">
         <item>Female</item>

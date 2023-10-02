@@ -11,15 +11,14 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.mixnchat.R
 import com.example.mixnchat.ui.mainpage.MainActivity
 import com.example.mixnchat.databinding.FragmentRegisterBinding
 import com.example.mixnchat.utils.AndroidUtil
-import com.example.mixnchat.utils.FirebaseUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -37,8 +36,7 @@ class RegisterFragment : Fragment() {
     private var selectedPicture : Uri? = null
     private var selectedBitmap : Bitmap? = null
     private val androidUtil = AndroidUtil()
-    private val firebaseUtil = FirebaseUtil()
-
+    private lateinit var viewModel : RegisterViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -49,6 +47,8 @@ class RegisterFragment : Fragment() {
 
     private fun init() {
         auth= Firebase.auth
+        viewModel = ViewModelProvider(this)[RegisterViewModel::class.java]
+        viewModel.init()
         registerLauncher()
     }
 
@@ -60,68 +60,37 @@ class RegisterFragment : Fragment() {
         binding.pp.setOnClickListener{
             ppClicked()
         }
+        binding.datePickerButton.setOnClickListener {
+            androidUtil.initDatePicker(requireContext(),binding.datePickerButton).show()
+        }
     }
 
-    private fun signUp() {
-
+    private fun signUp(){
         val email = binding.emailEditText.text.toString()
         val password = binding.passwordEditText.text.toString()
         val username = binding.usernameEditText.text.toString()
         val country = binding.countrySpinner.selectedItem.toString()
         val biography = binding.biographyEditText.text.toString()
         val gender = binding.genderSpinner.selectedItem.toString()
+        val date = binding.datePickerButton.text.toString()
 
 
-       if (email == "" || password == "" || biography == ""){
-
-           binding.emailEditText.error = this.getString(R.string.fillFieldMessage)
-           binding.passwordEditText.error = this.getString(R.string.fillFieldMessage)
-           binding.biographyEditText.error = this.getString(R.string.fillFieldMessage)
-
-
-       }else if(selectedPicture == null){
-           androidUtil.showToast(requireContext(),this.getString(R.string.selectPictureMessage))
-
-       }else{
-               auth.createUserWithEmailAndPassword(email,password).addOnSuccessListener {
-                   val imageName = "${firebaseUtil.currentUserId()}.jpg"
-                   val imageReference = firebaseUtil.getProfilePhotoFromStorage().child(imageName)
-                   if(selectedPicture != null){
-                       auth.currentUser?.sendEmailVerification()?.addOnCompleteListener { task ->
-                           if(task.isSuccessful) {
-                               imageReference.putFile(selectedPicture!!).addOnSuccessListener {
-                                   imageReference.downloadUrl.addOnSuccessListener { uri ->
-                                       val profileUrl = uri.toString()
-                                       val user = hashMapOf<String, Any>()
-                                       user["userUid"] = firebaseUtil.currentUserId()
-                                       user["profileUrl"] = profileUrl
-                                       user["username"] = username
-                                       user["country"] = country
-                                       user["gender"] = gender
-                                       user["biography"] = biography
-                                       user["speech"] = ""
-                                      firebaseUtil.getAllUser().document(firebaseUtil.currentUserId()).set(user).addOnSuccessListener {
-                                          val intent = Intent(requireActivity(),MainActivity::class.java)
-                                          startActivity(intent)
-                                          requireActivity().finish()
-                                       }.addOnFailureListener {
-                                           androidUtil.showToast(requireContext(),it.localizedMessage!!)
-                                       }
-                                   }
-                               }
-                           }
-                       }
-                   }
-               }.addOnFailureListener {
-                   androidUtil.showToast(requireContext(),it.localizedMessage!!)
-               }
-       }
+        viewModel.errorMessagePicture = getString(R.string.selectPictureMessage)
+        viewModel.errorMessageAll = getString(R.string.allFieldsMessage)
+        viewModel.signUp(email,password,username,country,biography,gender,date,selectedPicture,
+        onSuccess ={
+            val intent = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        },
+        onError = {errorMessage ->
+            androidUtil.showToast(requireContext(),errorMessage)
+        })
     }
 
     private fun ppClicked(){
         androidUtil.askPermission(requireContext(),requireActivity(),requireView(), permissionLauncher, activityResultLauncher)
     }
-
     private fun registerLauncher() {
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {

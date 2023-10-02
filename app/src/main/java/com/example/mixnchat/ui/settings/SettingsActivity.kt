@@ -1,4 +1,4 @@
-package com.example.mixnchat.ui.Settings
+package com.example.mixnchat.ui.settings
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
